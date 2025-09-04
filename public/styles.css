@@ -381,6 +381,126 @@ body {
     font-weight: 600;
 }
 
+/* 챌린지 섹션 */
+.challenge {
+    background: var(--light-green);
+}
+
+.challenge-intro {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.challenge-intro p {
+    font-size: 18px;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+.challenge-card {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.challenge-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-green);
+}
+
+.challenge-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.challenge-card h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.challenge-card p {
+    color: var(--text-light);
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.challenge-reward {
+    background: var(--primary-green);
+    color: var(--white);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.challenge-status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.challenge-status.completed {
+    background: var(--secondary-green);
+    color: var(--white);
+}
+
+.challenge-status.pending {
+    background: #FFA726;
+    color: var(--white);
+}
+
+.challenge-status.available {
+    background: var(--gray-300);
+    color: var(--gray-700);
+}
+
+.challenge-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 30px;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 10px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
 /* 사용법 섹션 */
 .user-flow {
     background: var(--white);
@@ -715,6 +835,17 @@ body {
     .benefits-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+    
+    .challenges-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .challenge-stats {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 30px 20px;
     }
     
     .download-content {
