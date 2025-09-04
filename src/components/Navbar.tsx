@@ -6,10 +6,10 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Home, MapPin, Coins, User } from 'lucide-react';
 
 const tabs = [
-  { id: 'sns', label: 'SNS', icon: Home, path: '/sns' },
-  { id: 'walk', label: '걷깅', icon: MapPin, path: '/walk' },
-  { id: 'points', label: '포인트', icon: Coins, path: '/points' },
-  { id: 'mypage', label: 'MyPage', icon: User, path: '/mypage' },
+  { id: 'sns', label: 'SNS', icon: Home, path: '/m/sns' },
+  { id: 'walk', label: '걷깅', icon: MapPin, path: '/m/walk' },
+  { id: 'points', label: '포인트', icon: Coins, path: '/m/points' },
+  { id: 'mypage', label: 'MyPage', icon: User, path: '/m/mypage' },
 ];
 
 export default function Navbar() {
