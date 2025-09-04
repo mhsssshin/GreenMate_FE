@@ -1,0 +1,38 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#F8F9FA"/>
+  
+  <!-- Map Background -->
+  <rect x="20" y="20" width="360" height="200" rx="10" fill="#E8F5E8" stroke="#00A67E" stroke-width="2"/>
+  
+  <!-- Current Location -->
+  <circle cx="100" cy="120" r="8" fill="#FF5722"/>
+  <circle cx="100" cy="120" r="15" fill="#FF5722" opacity="0.3"/>
+  <circle cx="100" cy="120" r="25" fill="#FF5722" opacity="0.1"/>
+  <text x="100" y="110" font-family="Arial" font-size="10" fill="#FF5722" text-anchor="middle">현재 위치</text>
+  
+  <!-- Destination -->
+  <circle cx="300" cy="180" r="8" fill="#4CAF50"/>
+  <text x="300" y="170" font-family="Arial" font-size="10" fill="#4CAF50" text-anchor="middle">목적지</text>
+  
+  <!-- Route -->
+  <path d="M 100 120 Q 200 140 300 180" stroke="#00A67E" stroke-width="4" fill="none"/>
+  
+  <!-- Navigation Arrow -->
+  <polygon points="200,140 195,135 205,135" fill="#00A67E"/>
+  
+  <!-- Progress Bar -->
+  <rect x="20" y="240" width="360" height="20" rx="10" fill="#E0E0E0"/>
+  <rect x="20" y="240" width="180" height="20" rx="10" fill="#00A67E"/>
+  <text x="200" y="255" font-family="Arial" font-size="12" fill="#333333" text-anchor="middle">50% 진행</text>
+  
+  <!-- Distance Info -->
+  <rect x="20" y="270" width="100" height="20" rx="5" fill="#FFFFFF" stroke="#00A67E"/>
+  <text x="70" y="285" font-family="Arial" font-size="10" fill="#00A67E" text-anchor="middle">남은 거리: 900m</text>
+  
+  <rect x="140" y="270" width="100" height="20" rx="5" fill="#FFFFFF" stroke="#00A67E"/>
+  <text x="190" y="285" font-family="Arial" font-size="10" fill="#00A67E" text-anchor="middle">예상 시간: 11분</text>
+  
+  <rect x="260" y="270" width="100" height="20" rx="5" fill="#FFFFFF" stroke="#00A67E"/>
+  <text x="310" y="285" font-family="Arial" font-size="10" fill="#00A67E" text-anchor="middle">걸음 수: 1,200</text>
+</svg>

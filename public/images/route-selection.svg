@@ -1,0 +1,43 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#F8F9FA"/>
+  
+  <!-- Map Background -->
+  <rect x="20" y="20" width="360" height="260" rx="10" fill="#E8F5E8" stroke="#00A67E" stroke-width="2"/>
+  
+  <!-- Start Point -->
+  <circle cx="80" cy="80" r="12" fill="#FF5722"/>
+  <text x="80" y="85" font-family="Arial" font-size="10" fill="#FFFFFF" text-anchor="middle">출발</text>
+  
+  <!-- End Point -->
+  <circle cx="320" cy="220" r="12" fill="#4CAF50"/>
+  <text x="320" y="225" font-family="Arial" font-size="10" fill="#FFFFFF" text-anchor="middle">도착</text>
+  
+  <!-- Route 1 - Less Walk (Red) -->
+  <path d="M 80 80 Q 200 100 320 220" stroke="#FF5722" stroke-width="4" fill="none" stroke-dasharray="5,5"/>
+  <text x="200" y="95" font-family="Arial" font-size="10" fill="#FF5722" text-anchor="middle">Less Walk</text>
+  
+  <!-- Route 2 - Recommended (Green) -->
+  <path d="M 80 80 Q 200 150 320 220" stroke="#00A67E" stroke-width="4" fill="none"/>
+  <text x="200" y="145" font-family="Arial" font-size="10" fill="#00A67E" text-anchor="middle">Recommended</text>
+  
+  <!-- Route 3 - More Walk (Blue) -->
+  <path d="M 80 80 Q 200 200 320 220" stroke="#2196F3" stroke-width="4" fill="none" stroke-dasharray="3,3"/>
+  <text x="200" y="195" font-family="Arial" font-size="10" fill="#2196F3" text-anchor="middle">More Walk</text>
+  
+  <!-- Route Info Cards -->
+  <rect x="20" y="20" width="100" height="60" rx="5" fill="#FFFFFF" stroke="#FF5722" stroke-width="2"/>
+  <text x="70" y="35" font-family="Arial" font-size="10" font-weight="bold" fill="#FF5722" text-anchor="middle">Less Walk</text>
+  <text x="70" y="50" font-family="Arial" font-size="9" fill="#333333" text-anchor="middle">거리: 1.2km</text>
+  <text x="70" y="65" font-family="Arial" font-size="9" fill="#333333" text-anchor="middle">시간: 15분</text>
+  
+  <rect x="150" y="20" width="100" height="60" rx="5" fill="#FFFFFF" stroke="#00A67E" stroke-width="2"/>
+  <text x="200" y="35" font-family="Arial" font-size="10" font-weight="bold" fill="#00A67E" text-anchor="middle">Recommended</text>
+  <text x="200" y="50" font-family="Arial" font-size="9" fill="#333333" text-anchor="middle">거리: 1.8km</text>
+  <text x="200" y="65" font-family="Arial" font-size="9" fill="#333333" text-anchor="middle">시간: 22분</text>
+  
+  <rect x="280" y="20" width="100" height="60" rx="5" fill="#FFFFFF" stroke="#2196F3" stroke-width="2"/>
+  <text x="330" y="35" font-family="Arial" font-size="10" font-weight="bold" fill="#2196F3" text-anchor="middle">More Walk</text>
+  <text x="330" y="50" font-family="Arial" font-size="9" fill="#333333" text-anchor="middle">거리: 2.5km</text>
+  <text x="330" y="65" font-family="Arial" font-size="9" fill="#333333" text-anchor="middle">시간: 30분</text>
+</svg>

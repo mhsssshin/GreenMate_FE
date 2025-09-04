@@ -1,0 +1,56 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#F8F9FA"/>
+  
+  <!-- Header -->
+  <rect x="20" y="20" width="360" height="40" rx="5" fill="#00A67E"/>
+  <text x="200" y="45" font-family="Arial" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">건강 기록</text>
+  
+  <!-- Stats Cards -->
+  <rect x="30" y="80" width="100" height="80" rx="8" fill="#FFFFFF" stroke="#00A67E" stroke-width="2"/>
+  <circle cx="80" cy="110" r="20" fill="#00A67E" opacity="0.2"/>
+  <text x="80" y="105" font-family="Arial" font-size="16" font-weight="bold" fill="#00A67E" text-anchor="middle">5.2</text>
+  <text x="80" y="120" font-family="Arial" font-size="10" fill="#00A67E" text-anchor="middle">km</text>
+  <text x="80" y="140" font-family="Arial" font-size="12" font-weight="bold" fill="#333333" text-anchor="middle">총 거리</text>
+  <text x="80" y="155" font-family="Arial" font-size="10" fill="#666666" text-anchor="middle">이번 주</text>
+  
+  <rect x="150" y="80" width="100" height="80" rx="8" fill="#FFFFFF" stroke="#4CAF50" stroke-width="2"/>
+  <circle cx="200" cy="110" r="20" fill="#4CAF50" opacity="0.2"/>
+  <text x="200" y="105" font-family="Arial" font-size="16" font-weight="bold" fill="#4CAF50" text-anchor="middle">42</text>
+  <text x="200" y="120" font-family="Arial" font-size="10" fill="#4CAF50" text-anchor="middle">분</text>
+  <text x="200" y="140" font-family="Arial" font-size="12" font-weight="bold" fill="#333333" text-anchor="middle">총 시간</text>
+  <text x="200" y="155" font-family="Arial" font-size="10" fill="#666666" text-anchor="middle">이번 주</text>
+  
+  <rect x="270" y="80" width="100" height="80" rx="8" fill="#FFFFFF" stroke="#2196F3" stroke-width="2"/>
+  <circle cx="320" cy="110" r="20" fill="#2196F3" opacity="0.2"/>
+  <text x="320" y="105" font-family="Arial" font-size="16" font-weight="bold" fill="#2196F3" text-anchor="middle">6,500</text>
+  <text x="320" y="120" font-family="Arial" font-size="10" fill="#2196F3" text-anchor="middle">걸음</text>
+  <text x="320" y="140" font-family="Arial" font-size="12" font-weight="bold" fill="#333333" text-anchor="middle">총 걸음</text>
+  <text x="320" y="155" font-family="Arial" font-size="10" fill="#666666" text-anchor="middle">이번 주</text>
+  
+  <!-- Weekly Chart -->
+  <rect x="30" y="180" width="340" height="100" rx="8" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="1"/>
+  <text x="200" y="200" font-family="Arial" font-size="14" font-weight="bold" fill="#333333" text-anchor="middle">주간 활동 현황</text>
+  
+  <!-- Chart Bars -->
+  <rect x="50" y="220" width="20" height="40" fill="#00A67E"/>
+  <text x="60" y="270" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">월</text>
+  
+  <rect x="90" y="200" width="20" height="60" fill="#00A67E"/>
+  <text x="100" y="270" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">화</text>
+  
+  <rect x="130" y="180" width="20" height="80" fill="#00A67E"/>
+  <text x="140" y="270" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">수</text>
+  
+  <rect x="170" y="210" width="20" height="50" fill="#00A67E"/>
+  <text x="180" y="270" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">목</text>
+  
+  <rect x="210" y="190" width="20" height="70" fill="#00A67E"/>
+  <text x="220" y="270" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">금</text>
+  
+  <rect x="250" y="160" width="20" height="100" fill="#4CAF50"/>
+  <text x="260" y="270" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">토</text>
+  
+  <rect x="290" y="170" width="20" height="90" fill="#4CAF50"/>
+  <text x="300" y="270" font-family="Arial" font-size="8" fill="#666666" text-anchor="middle">일</text>
+</svg>

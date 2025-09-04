@@ -1,0 +1,48 @@
+<svg width="300" height="600" viewBox="0 0 300 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="600" rx="30" fill="#FFFFFF" stroke="#E0E0E0" stroke-width="2"/>
+  <rect x="20" y="20" width="260" height="560" rx="20" fill="#F5F5F5"/>
+  
+  <!-- Status Bar -->
+  <rect x="30" y="30" width="240" height="30" rx="5" fill="#00A67E"/>
+  <circle cx="50" cy="45" r="3" fill="#FFFFFF"/>
+  <rect x="60" y="42" width="40" height="6" rx="3" fill="#FFFFFF"/>
+  <text x="250" y="50" font-family="Arial" font-size="12" fill="#FFFFFF">100%</text>
+  
+  <!-- App Header -->
+  <rect x="30" y="70" width="240" height="50" fill="#00A67E"/>
+  <text x="150" y="100" font-family="Arial" font-size="16" font-weight="bold" fill="#FFFFFF" text-anchor="middle">GreenMate</text>
+  
+  <!-- Navigation Tabs -->
+  <rect x="30" y="130" width="240" height="40" fill="#F8F9FA"/>
+  <rect x="30" y="130" width="60" height="40" fill="#00A67E"/>
+  <text x="60" y="155" font-family="Arial" font-size="12" fill="#FFFFFF" text-anchor="middle">SNS</text>
+  <text x="120" y="155" font-family="Arial" font-size="12" fill="#666666" text-anchor="middle">걷깅</text>
+  <text x="180" y="155" font-family="Arial" font-size="12" fill="#666666" text-anchor="middle">포인트</text>
+  <text x="240" y="155" font-family="Arial" font-size="12" fill="#666666" text-anchor="middle">MyPage</text>
+  
+  <!-- Content Area -->
+  <rect x="30" y="180" width="240" height="380" fill="#FFFFFF"/>
+  
+  <!-- Post Card 1 -->
+  <rect x="40" y="190" width="220" height="80" rx="8" fill="#F8F9FA" stroke="#E0E0E0"/>
+  <circle cx="60" cy="210" r="15" fill="#00A67E"/>
+  <text x="85" y="215" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">걷기마니아</text>
+  <text x="85" y="230" font-family="Arial" font-size="10" fill="#666666">2시간 전</text>
+  <text x="40" y="250" font-family="Arial" font-size="11" fill="#333333">오늘 강남역에서 신논현역까지</text>
+  <text x="40" y="265" font-family="Arial" font-size="11" fill="#333333">걷기로 이동했어요! 🌱</text>
+  
+  <!-- Post Card 2 -->
+  <rect x="40" y="280" width="220" height="80" rx="8" fill="#F8F9FA" stroke="#E0E0E0"/>
+  <circle cx="60" cy="300" r="15" fill="#4CAF50"/>
+  <text x="85" y="305" font-family="Arial" font-size="12" font-weight="bold" fill="#333333">환경지킴이</text>
+  <text x="85" y="320" font-family="Arial" font-size="10" fill="#666666">4시간 전</text>
+  <text x="40" y="340" font-family="Arial" font-size="11" fill="#333333">걷기로 출퇴근하면서</text>
+  <text x="40" y="355" font-family="Arial" font-size="11" fill="#333333">탄소발자국을 줄이고 있어요! 💚</text>
+  
+  <!-- Bottom Navigation -->
+  <rect x="30" y="570" width="240" height="30" fill="#F8F9FA"/>
+  <circle cx="60" cy="585" r="8" fill="#00A67E"/>
+  <circle cx="120" cy="585" r="8" fill="#CCCCCC"/>
+  <circle cx="180" cy="585" r="8" fill="#CCCCCC"/>
+  <circle cx="240" cy="585" r="8" fill="#CCCCCC"/>
+</svg>
