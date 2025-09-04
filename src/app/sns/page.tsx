@@ -96,7 +96,7 @@ export default function SNSPage() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
                 <Image
-                  src={post.author.avatar}
+                  src={post.author.avatar || '/images/small-avatar.svg'}
                   alt={post.author.nickname}
                   width={40}
                   height={40}
