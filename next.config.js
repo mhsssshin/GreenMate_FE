@@ -4,7 +4,7 @@ const nextConfig = {
     appDir: true,
   },
   images: {
-    domains: ['localhost', 'images.unsplash.com'],
+    domains: ['localhost', 'images.unsplash.com', 'www.greened.kr'],
   },
   // 웹뷰 환경을 위한 설정
   async headers() {

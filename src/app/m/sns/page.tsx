@@ -16,7 +16,7 @@ const mockPosts: Post[] = [
     },
     type: 'image',
     content: '한화생명 ESG 경영 인증을 받았습니다! 🏆 2024년 지속가능경영 우수기업으로 선정되어 자랑스럽습니다. 고객과 함께하는 지속가능한 미래를 만들어가겠습니다! #한화생명 #ESG경영 #지속가능경영',
-    images: ['https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop'],
+    images: ['https://www.greened.kr/news/photo/202303/301837_333663_3553.jpg'],
     liked: true,
     likeCount: 156,
     commentCount: 42,
