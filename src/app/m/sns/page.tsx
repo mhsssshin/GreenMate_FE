@@ -56,7 +56,7 @@ const mockPosts: Post[] = [
     },
     type: 'image',
     content: '구글에서 ESG 활동 인증을 받았어요! 🏆 3개월간 매일 걷기로 탄소중립에 기여했답니다. 여러분도 함께해요!',
-    images: ['https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop'],
+    images: ['https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop'],
     liked: false,
     likeCount: 45,
     commentCount: 12,
@@ -262,7 +262,7 @@ export default function SNSPage() {
       {/* 헤더 */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-gray-900">SNS</h1>
+          <h1 className="text-lg font-semibold text-gray-900">피드</h1>
           <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
             <Plus size={20} className="text-gray-600" />
           </button>

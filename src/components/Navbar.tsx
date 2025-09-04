@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Home, MapPin, Coins, User, Target } from 'lucide-react';
 
 const tabs = [
-  { id: 'sns', label: 'SNS', icon: Home, path: '/m/sns' },
+  { id: 'sns', label: '피드', icon: Home, path: '/m/sns' },
   { id: 'walk', label: '걷깅', icon: MapPin, path: '/m/walk' },
   { id: 'challenge', label: '챌린지', icon: Target, path: '/m/challenge' },
   { id: 'points', label: '포인트', icon: Coins, path: '/m/points' },
