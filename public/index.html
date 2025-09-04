@@ -664,6 +664,26 @@
                     }
                 });
             });
+
+            // APK 다운로드 강제 실행
+            function forceDownloadAPK() {
+                const link = document.createElement('a');
+                link.href = './GreenMate_v1.0.0.apk';
+                link.download = 'GreenMate_v1.0.0.apk';
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            // 다운로드 버튼에 이벤트 리스너 추가
+            const downloadButtons = document.querySelectorAll('a[href*="GreenMate_v1.0.0.apk"]');
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    forceDownloadAPK();
+                });
+            });
         });
     </script>
 </body>
