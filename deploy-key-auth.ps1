@@ -125,8 +125,8 @@ log_error() {
 install_nodejs() {
     if ! command -v node &> /dev/null; then
         log_info "Node.js 설치 중..."
-        curl -fsSL https://deb.nodesource.com/setup_`${NODE_VERSION}.x | sudo -E bash -
-        apt-get install -y nodejs
+        curl -fsSL https://rpm.nodesource.com/setup_`${NODE_VERSION}.x | sudo bash -
+        dnf install -y nodejs
         log_success "Node.js 설치 완료"
     else
         log_info "Node.js가 이미 설치되어 있습니다: `$(node --version)"
@@ -187,8 +187,8 @@ restart_service() {
 setup_nginx() {
     if ! command -v nginx &> /dev/null; then
         log_info "Nginx 설치 중..."
-        apt-get update
-        apt-get install -y nginx
+        dnf update -y
+        dnf install -y nginx
         
         cat > /etc/nginx/sites-available/greenmate << EOF
 server {
@@ -219,7 +219,7 @@ EOF
 # 메인 배포 함수
 main() {
     log_info "GreenMate 배포 시작..."
-    apt-get update
+    dnf update -y
     install_nodejs
     install_pm2
     create_backup
