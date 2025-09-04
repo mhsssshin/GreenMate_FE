@@ -65,24 +65,11 @@ body {
     margin-right: 15px;
 }
 
-.nav-logo h1 {
+.nav-logo h2 {
     font-size: 24px;
     font-weight: 700;
     color: var(--primary-green);
-    margin-bottom: 2px;
-}
-
-.nav-logo h2 {
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text-dark);
-    margin-bottom: 2px;
-}
-
-.nav-logo .tagline {
-    font-size: 12px;
-    color: var(--text-light);
-    font-weight: 400;
+    margin: 0;
 }
 
 .nav-menu {
@@ -665,16 +652,8 @@ body {
         margin-right: 10px;
     }
     
-    .nav-logo h1 {
-        font-size: 18px;
-    }
-    
     .nav-logo h2 {
-        font-size: 14px;
-    }
-    
-    .nav-logo .tagline {
-        font-size: 10px;
+        font-size: 18px;
     }
     
     .hero-content {
