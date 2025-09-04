@@ -234,8 +234,10 @@ main() {
 main "`$@"
 "@
 
-    # 서버에 배포 스크립트 업로드
-    $serverScript | Out-File -FilePath "server_deploy.sh" -Encoding UTF8
+    # 서버에 배포 스크립트 업로드 (Unix 형식으로 저장)
+    $serverScript | Out-File -FilePath "server_deploy.sh" -Encoding UTF8 -NoNewline
+    $serverScript = $serverScript -replace "`r`n", "`n"
+    [System.IO.File]::WriteAllText("server_deploy.sh", $serverScript, [System.Text.Encoding]::UTF8)
     
     Write-Info "서버에 배포 스크립트 업로드 중..."
     Invoke-SCPUpload "server_deploy.sh" "/tmp/server_deploy.sh"
