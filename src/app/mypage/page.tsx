@@ -164,7 +164,7 @@ export default function MyPage() {
         <div className="card">
           <div className="flex items-center space-x-4 mb-4">
             <Image
-              src={profile.avatar}
+              src={profile.avatar || '/images/default-avatar.svg'}
               alt={profile.nickname}
               width={64}
               height={64}
