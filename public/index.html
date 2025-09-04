@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifePlus GreenMate - 건강한 걷기와 ESG를 연결하는 도보 가이드</title>
+    <link rel="stylesheet" href="./index_files/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 모바일 반응형 개선 */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block !important;
+            }
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                gap: 15px;
+                z-index: 1000;
+            }
+            .nav-menu.mobile-active {
+                display: flex;
+            }
+            .nav-menu li a {
+                font-size: 16px;
+                padding: 10px 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            
+            /* 모바일에서 헤더 높이 조정 */
+            .header {
+                padding: 10px 0;
+            }
+            
+            .nav-logo h1 {
+                font-size: 18px;
+            }
+            
+            .nav-logo h2 {
+                font-size: 14px;
+            }
+            
+            .nav-logo .tagline {
+                font-size: 10px;
+            }
+            
+            /* 모바일 히어로 섹션 */
+            .hero {
+                padding: 60px 0 40px;
+            }
+            
+            .hero-title {
+                font-size: 28px !important;
+                line-height: 1.3 !important;
+                margin-bottom: 20px !important;
+            }
+            
+            .hero-subtitle {
+                font-size: 16px !important;
+                line-height: 1.5 !important;
+                margin-bottom: 30px !important;
+            }
+            
+            .hero-features {
+                flex-direction: column;
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+            
+            .feature-item {
+                font-size: 14px;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                padding: 15px 20px;
+                font-size: 16px;
+            }
+            
+            /* 모바일 섹션 패딩 조정 */
+            .section {
+                padding: 40px 0;
+            }
+            
+            .container {
+                padding: 0 20px;
+            }
+            
+            .section-title {
+                font-size: 14px;
+            }
+            
+            .section-subtitle {
+                font-size: 24px !important;
+                line-height: 1.3 !important;
+            }
+            
+            /* 모바일 서비스 카드 */
+            .service-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .service-card {
+                padding: 20px;
+            }
+            
+            /* 모바일 기능 그리드 */
+            .features-grid {
+                gap: 30px;
+            }
+            
+            .feature-detail {
+                flex-direction: column !important;
+            }
+            
+            .feature-detail.reverse {
+                flex-direction: column !important;
+            }
+            
+            .feature-image img {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+            }
+            
+            /* 모바일 플로우 스텝 */
+            .flow-steps {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .step {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .step-number {
+                font-size: 24px;
+                min-width: 50px;
+            }
+            
+            .step-content h4 {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+            
+            .step-content p {
+                font-size: 14px;
+                margin-bottom: 15px;
+            }
+            
+            .step-image img {
+                width: 80px;
+                height: 80px;
+                object-fit: cover;
+            }
+            
+            /* 모바일 혜택 그리드 */
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .benefit-card {
+                padding: 20px;
+            }
+            
+            /* 모바일 다운로드 섹션 */
+            .download-content {
+                flex-direction: column;
+                gap: 30px;
+                text-align: center;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+            
+            .store-btn {
+                width: 200px;
+            }
+            
+            /* 모바일 푸터 */
+            .footer-content {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .footer-section {
+                text-align: center;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+        
+        /* 태블릿 반응형 */
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .hero-title {
+                font-size: 36px !important;
+            }
+            
+            .section-subtitle {
+                font-size: 28px !important;
+            }
+            
+            .features-grid {
+                gap: 40px;
+            }
+            
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+    <style>
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.98) !important;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body style="opacity: 1; transition: opacity 0.6s;">
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="nav-logo">
+                <h1>LIFEPLUS</h1>
+                <h2>GREENMATE</h2>
+                <span class="tagline">HEALTHY WALKING GUIDE</span>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#service">서비스</a></li>
+                <li class="nav-item"><a href="#features">주요 기능</a></li>
+                <li class="nav-item"><a href="#flow">사용 방법</a></li>
+                <li class="nav-item"><a href="#benefits">혜택</a></li>
+                <li class="nav-item"><a href="#download">다운로드</a></li>
+            </ul>
+            
+            <div class="nav-controls">
+                <button class="mobile-menu-btn" style="display: none; background: none; border: none; font-size: 24px; color: rgb(46, 125, 50); cursor: pointer; padding: 8px;">☰</button>
+                <button class="download-btn" style="">앱 다운로드</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h2 class="hero-title">건강한 걷기로<br>지구도 살리고<br>건강도 챙기세요</h2>
+                <p class="hero-subtitle">LifePlus GreenMate는 걷기 습관화와 ESG 활동을 연결하는<br>스마트한 도보 가이드 앱입니다.</p>
+                <div class="hero-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">🗺️</span>
+                        <span>3가지 경로 추천</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">👟</span>
+                        <span>걸음 수 예측</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🌱</span>
+                        <span>탄소 절감 효과</span>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <button class="btn-primary" style="">무료 다운로드</button>
+                    <button class="btn-secondary">서비스 소개 영상</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="phone-mockup">
+                    <img src="./index_files/photo-1512941937669-90a1b58e7e9c" alt="LifePlus GreenMate 앱">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Overview Section -->
+    <section class="section service-overview" id="service">
+        <div class="container">
+            <div class="section-header" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                <h3 class="section-title">SERVICE</h3>
+                <h2 class="section-subtitle">걷기와 환경보호를<br>한번에 해결하는 솔루션</h2>
+            </div>
+            
+            <div class="service-content">
+                <div class="service-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="service-icon">🎯</div>
+                    <h4>스마트 경로 추천</h4>
+                    <p>목적지 입력 시 AI가 3가지 경로를 제안<br>Less Walk, Recommended, More Walk</p>
+                </div>
+                
+                <div class="service-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="service-icon">📱</div>
+                    <h4>실시간 내비게이션</h4>
+                    <p>GPS 기반 위치 추적과 경로 이탈 감지<br>안전하고 정확한 도보 안내</p>
+                </div>
+                
+                <div class="service-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="service-icon">📊</div>
+                    <h4>건강 데이터 분석</h4>
+                    <p>거리, 시간, 걸음 수 자동 측정<br>개인 건강 기록 관리</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-header" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                <h3 class="section-title">FEATURES</h3>
+                <h2 class="section-subtitle">핵심 기능</h2>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-detail" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="feature-image">
+                        <img src="./index_files/photo-1551650975-87deedd944c3" alt="경로 선택">
+                    </div>
+                    <div class="feature-text">
+                        <h4>3가지 맞춤 경로</h4>
+                        <p><strong>Less Walk:</strong> 최단 거리로 빠르게</p>
+                        <p><strong>Recommended:</strong> 적당한 운동량</p>
+                        <p><strong>More Walk:</strong> 건강을 위한 긴 경로</p>
+                        <p>각 경로별 예상 거리, 시간, 걸음 수를 미리 확인할 수 있습니다.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-detail reverse" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="feature-text">
+                        <h4>실시간 GPS 네비게이션</h4>
+                        <p>정확한 GPS 추적으로 현재 위치와 진행률을 실시간 표시</p>
+                        <p>경로에서 40m 이상 벗어나면 자동으로 재탐색 안내</p>
+                        <p>목적지까지 남은 거리와 시간을 지속적으로 업데이트</p>
+                    </div>
+                    <div class="feature-image">
+                        <img src="./index_files/photo-1558618666-fcd25c85cd64" alt="GPS 내비게이션">
+                    </div>
+                </div>
+                
+                <div class="feature-detail" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="feature-image">
+                        <img src="./index_files/photo-1512941937669-90a1b58e7e9c(1)" alt="건강 기록">
+                    </div>
+                    <div class="feature-text">
+                        <h4>건강 기록 관리</h4>
+                        <p>매일의 걷기 데이터를 자동으로 저장하고 분석</p>
+                        <p>총 거리, 소요 시간, 걸음 수를 한눈에 확인</p>
+                        <p>지속적인 건강 관리와 목표 설정을 지원</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Flow Section -->
+    <section class="section user-flow" id="flow">
+        <div class="container">
+            <div class="section-header" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                <h3 class="section-title">HOW TO USE</h3>
+                <h2 class="section-subtitle">간단한 4단계로<br>건강한 걷기 시작</h2>
+            </div>
+            
+            <div class="flow-steps">
+                <div class="step" style="opacity: 1; transform: translateY(0px); transition: transform 0.3s;">
+                    <div class="step-number" style="transition: transform 0.3s;">01</div>
+                    <div class="step-content">
+                        <h4>목적지 입력</h4>
+                        <p>출발지(현재 위치)와<br>목적지를 입력하세요</p>
+                        <div class="step-image">
+                            <img src="./index_files/photo-1556075798-4825dfaaf498" alt="목적지 입력" style="transition: transform 0.3s;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step" style="opacity: 1; transform: translateY(0px); transition: transform 0.3s;">
+                    <div class="step-number" style="transition: transform 0.3s; transform: scale(1);">02</div>
+                    <div class="step-content">
+                        <h4>경로 선택</h4>
+                        <p>3가지 경로 옵션 중<br>원하는 경로를 선택하세요</p>
+                        <div class="step-image">
+                            <img src="./index_files/photo-1551650975-87deedd944c3(1)" alt="경로 선택" style="transition: transform 0.3s; transform: scale(1);">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step" style="opacity: 1; transform: translateY(0px); transition: transform 0.3s;">
+                    <div class="step-number" style="transition: transform 0.3s;">03</div>
+                    <div class="step-content">
+                        <h4>걷기 시작</h4>
+                        <p>GPS 내비게이션을 따라<br>안전하게 걸어가세요</p>
+                        <div class="step-image">
+                            <img src="./index_files/photo-1571019613454-1cb2f99b2d8b" alt="걷기 시작" style="transition: transform 0.3s;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step" style="opacity: 1; transform: translateY(0px); transition: transform 0.3s;">
+                    <div class="step-number" style="transition: transform 0.3s; transform: scale(1);">04</div>
+                    <div class="step-content">
+                        <h4>기록 저장</h4>
+                        <p>도착 후 건강 데이터를<br>자동으로 저장합니다</p>
+                        <div class="step-image">
+                            <img src="./index_files/photo-1512941937669-90a1b58e7e9c(2)" alt="기록 저장" style="transition: transform 0.3s; transform: scale(1);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section benefits" id="benefits">
+        <div class="container">
+            <div class="section-header" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                <h3 class="section-title">BENEFITS</h3>
+                <h2 class="section-subtitle">GreenMate와 함께하는<br>특별한 혜택</h2>
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="benefit-icon">💪</div>
+                    <h4>건강 증진</h4>
+                    <p>규칙적인 걷기 습관으로<br>심혈관 건강과 체력 향상</p>
+                </div>
+                
+                <div class="benefit-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="benefit-icon">🌍</div>
+                    <h4>환경 보호</h4>
+                    <p>대중교통 대신 도보로<br>탄소 배출량 실질적 감소</p>
+                </div>
+                
+                <div class="benefit-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="benefit-icon">💰</div>
+                    <h4>교통비 절약</h4>
+                    <p>걷기를 통한<br>교통비 절약 효과</p>
+                </div>
+                
+                <div class="benefit-card" style="opacity: 1; transform: translateY(0px); transition: opacity 0.8s, transform 0.8s;">
+                    <div class="benefit-icon">📈</div>
+                    <h4>데이터 관리</h4>
+                    <p>개인 맞춤형<br>건강 데이터 분석</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="section download-section" id="download">
+        <div class="container">
+            <div class="download-content">
+                <div class="download-text">
+                    <h2>지금 바로 시작하세요</h2>
+                    <p>LifePlus GreenMate로 건강한 걷기 습관을 만들고<br>지구 환경 보호에도 동참해보세요.</p>
+                    <div class="download-buttons">
+                        <a href="#" class="store-btn ios">
+                            <img src="./index_files/photo-1611532736597-de2d4265fba3" alt="App Store">
+                        </a>
+                        <a href="#" class="store-btn android">
+                            <img src="./index_files/photo-1512941937669-90a1b58e7e9c(3)" alt="Google Play">
+                        </a>
+                    </div>
+                    <p class="download-note">* 현재 개발 중이며, 곧 출시 예정입니다.</p>
+                </div>
+                <div class="download-image">
+                    <img src="./index_files/photo-1512941937669-90a1b58e7e9c(1)" alt="앱 다운로드">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>LIFEPLUS GREENMATE</h4>
+                    <p>건강한 걷기와 환경보호를 연결하는<br>스마트 도보 가이드</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h5>서비스</h5>
+                    <ul>
+                        <li><a href="#service">서비스 소개</a></li>
+                        <li><a href="#features">주요 기능</a></li>
+                        <li><a href="#flow">사용 방법</a></li>
+                        <li><a href="#benefits">혜택</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h5>다운로드</h5>
+                    <div class="footer-download">
+                        <a href="#">iOS 앱 다운로드</a>
+                        <a href="#">Android 앱 다운로드</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h5>고객 지원</h5>
+                    <p>이메일: support@lifeplusgreenmate.com<br>
+                    전화: 1588-0000</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2024 LifePlus GreenMate. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">개인정보처리방침</a>
+                    <a href="#">이용약관</a>
+                    <a href="#">문의하기</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 모바일 메뉴 토글
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navMenu.classList.toggle('mobile-active');
+                });
+            }
+            
+            // 스크롤 시 헤더 스타일 변경
+            const header = document.querySelector('.header');
+            if (header) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 100) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                });
+            }
+            
+            // 부드러운 스크롤
+            const navLinks = document.querySelectorAll('.nav-menu a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        // 모바일 메뉴 닫기
+                        navMenu.classList.remove('mobile-active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
