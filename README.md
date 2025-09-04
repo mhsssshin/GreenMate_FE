@@ -191,7 +191,60 @@ npm run test:e2e
 
 ## 📦 배포
 
-### Vercel 배포
+### 자동 배포 (권장)
+
+프로젝트에는 자동 배포 스크립트가 포함되어 있습니다.
+
+#### Windows 사용자
+```bash
+# 간단한 배포 (PuTTY 필요)
+deploy-simple.bat
+
+# PowerShell 배포 (WSL 또는 expect 필요)
+.\deploy-windows.ps1
+```
+
+#### Linux/macOS 사용자
+```bash
+# Bash 배포 (sshpass 필요)
+./deploy.sh
+```
+
+### 배포 과정
+
+1. **GitHub 푸시**: 로컬 변경사항을 GitHub에 자동 푸시
+2. **서버 배포**: 
+   - GitHub에서 소스 다운로드
+   - Node.js/PM2 설치 (필요시)
+   - 의존성 설치 및 빌드
+   - Nginx 설정 (필요시)
+   - 웹서비스 재기동
+
+### 서버 정보
+- **서버 IP**: 103.244.108.70
+- **서비스 URL**: http://103.244.108.70
+- **배포 디렉토리**: /var/www/greenmate
+- **백업 디렉토리**: /var/backups/greenmate
+
+### 수동 배포
+
+```bash
+# 1. GitHub에 푸시
+git add .
+git commit -m "Deploy: $(date)"
+git push origin master
+
+# 2. 서버에 SSH 접속
+ssh root@103.244.108.70
+
+# 3. 서버에서 배포 스크립트 실행
+cd /tmp
+wget https://raw.githubusercontent.com/mhsssshin/GreenMate_FE/master/server_deploy.sh
+chmod +x server_deploy.sh
+./server_deploy.sh
+```
+
+### Vercel 배포 (대안)
 
 ```bash
 # Vercel CLI 설치
@@ -199,20 +252,6 @@ npm i -g vercel
 
 # 배포
 vercel --prod
-```
-
-### Docker 배포
-
-```dockerfile
-# Dockerfile (추후 구현 예정)
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
 ```
 
 ## 🤝 기여하기
