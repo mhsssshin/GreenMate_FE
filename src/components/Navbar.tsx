@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { Home, MapPin, Coins, User } from 'lucide-react';
 
@@ -29,10 +30,14 @@ export default function Navbar() {
       {/* LifePlus 로고 영역 */}
       <div className="flex items-center justify-center h-14 px-4">
         <div className="flex items-center space-x-2">
-          {/* LifePlus 로고 (실제 로고 이미지로 교체 예정) */}
-          <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">LP</span>
-          </div>
+          {/* LifePlus 로고 */}
+          <Image 
+            src="/images/lifeplus-logo.svg" 
+            alt="LifePlus" 
+            width={32}
+            height={32}
+            className="w-8 h-8"
+          />
           <span className="text-lg font-semibold text-gray-900">GreenMate</span>
         </div>
       </div>

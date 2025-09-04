@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { User, Settings, MapPin, BarChart3, Shield, FileText, Info, Trash2, LogOut } from 'lucide-react';
 import { UserProfile } from '@/types';
 import { getUserProfile, updateUserProfile } from '@/lib/storage';
@@ -20,7 +21,7 @@ export default function MyPage() {
       const defaultProfile: UserProfile = {
         id: 'user1',
         nickname: 'GreenMate 사용자',
-        avatar: 'https://via.placeholder.com/80',
+        avatar: '/images/default-avatar.svg',
         totalDistance: 0,
         totalSteps: 0,
         totalPoints: 0,
@@ -162,9 +163,11 @@ export default function MyPage() {
         {/* 프로필 카드 */}
         <div className="card">
           <div className="flex items-center space-x-4 mb-4">
-            <img
+            <Image
               src={profile.avatar}
               alt={profile.nickname}
+              width={64}
+              height={64}
               className="w-16 h-16 rounded-full"
             />
             <div className="flex-1">
@@ -248,9 +251,13 @@ export default function MyPage() {
         {/* 앱 정보 */}
         <div className="card bg-gray-50">
           <div className="text-center py-4">
-            <div className="w-12 h-12 bg-primary-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-              <span className="text-white font-bold">GM</span>
-            </div>
+            <Image 
+              src="/images/greenmate-logo.svg" 
+              alt="GreenMate" 
+              width={48}
+              height={48}
+              className="w-12 h-12 mx-auto mb-3"
+            />
             <h3 className="font-semibold text-gray-900 mb-1">GreenMate</h3>
             <p className="text-sm text-gray-500 mb-2">버전 1.0.0</p>
             <p className="text-xs text-gray-400">

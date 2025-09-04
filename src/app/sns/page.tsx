@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Plus, Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
 import { Post } from '@/types';
 
@@ -11,7 +12,7 @@ const mockPosts: Post[] = [
     author: {
       id: 'user1',
       nickname: '걷기마니아',
-      avatar: 'https://via.placeholder.com/40',
+      avatar: '/images/small-avatar.svg',
     },
     type: 'route',
     content: '오늘 강남역에서 신논현역까지 걷기로 이동했어요! 30분 걸렸지만 기분이 좋네요 🌱',
@@ -37,7 +38,7 @@ const mockPosts: Post[] = [
     author: {
       id: 'user2',
       nickname: '환경지킴이',
-      avatar: 'https://via.placeholder.com/40',
+      avatar: '/images/small-avatar.svg',
     },
     type: 'text',
     content: '걷기로 출퇴근하면서 탄소발자국을 줄이고 있어요. 작은 실천이 모여 큰 변화를 만들 수 있다고 믿어요! 💚',
@@ -94,9 +95,11 @@ export default function SNSPage() {
             {/* 포스트 헤더 */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
-                <img
+                <Image
                   src={post.author.avatar}
                   alt={post.author.nickname}
+                  width={40}
+                  height={40}
                   className="w-10 h-10 rounded-full"
                 />
                 <div>
