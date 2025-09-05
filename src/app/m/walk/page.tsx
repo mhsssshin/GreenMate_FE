@@ -850,7 +850,7 @@ export default function WalkPage() {
                     <img 
                       src={trackingImage} 
                       alt={`${pathShape} 모양 트래킹 경로`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                     />
                   )}
                   <div className="absolute top-2 right-2 bg-white bg-opacity-80 px-2 py-1 rounded text-xs font-medium">

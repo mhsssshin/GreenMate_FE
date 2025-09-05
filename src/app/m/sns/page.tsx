@@ -500,7 +500,7 @@ export default function SNSPage() {
                             <img 
                               src={post.routeShare.trackingImage} 
                               alt="트래킹 경로"
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                             />
                           ) : (
                             <>
