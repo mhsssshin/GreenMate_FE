@@ -214,13 +214,13 @@ export default function WalkPage() {
               />
               
               {/* 자동차 시동버튼 스타일의 검색 버튼 */}
-              <div className="flex justify-center">
+              <div className="flex justify-center py-8">
                 <button
                   onClick={searchCourses}
                   disabled={isSearching}
-                  className="w-16 h-16 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 transform hover:scale-105 disabled:scale-100"
+                  className="w-24 h-24 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 transform hover:scale-110 disabled:scale-100"
                 >
-                  <Search size={24} className="text-white" />
+                  <Search size={32} className="text-white" />
                 </button>
               </div>
               
