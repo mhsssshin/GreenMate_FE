@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { MapPin, Clock, Footprints, Navigation, Search, Star, Mountain, TreePine } from 'lucide-react';
 import { Location } from '@/types';
 import { getCurrentLocation, watchLocation } from '@/lib/bridge';
-import { getCurrentSteps } from '@/utils/helpers';
+import { getCurrentSteps, getDefaultImageForLocation } from '@/utils/helpers';
 
 interface TrackingCourse {
   id: string;
@@ -18,6 +18,7 @@ interface TrackingCourse {
   description: string;
   rating: number;
   type: 'park' | 'mountain' | 'city' | 'river';
+  imageUrl?: string; // 이미지 URL 추가
 }
 
 export default function WalkPage() {
@@ -103,7 +104,8 @@ export default function WalkPage() {
         steps: 4000,
         description: '한강을 따라 걷는 편안한 코스',
         rating: 4.5,
-        type: 'river'
+        type: 'river',
+        imageUrl: getDefaultImageForLocation('한강')
       },
       {
         id: '2',
@@ -115,7 +117,8 @@ export default function WalkPage() {
         steps: 10500,
         description: '자연을 만끽할 수 있는 산악 코스',
         rating: 4.8,
-        type: 'mountain'
+        type: 'mountain',
+        imageUrl: getDefaultImageForLocation('북한산')
       },
       {
         id: '3',
@@ -127,7 +130,8 @@ export default function WalkPage() {
         steps: 2600,
         description: '도심 속 자연을 느낄 수 있는 코스',
         rating: 4.3,
-        type: 'park'
+        type: 'park',
+        imageUrl: getDefaultImageForLocation('서울숲')
       },
       {
         id: '4',
@@ -139,7 +143,8 @@ export default function WalkPage() {
         steps: 7200,
         description: '도심 속 시원한 물길을 따라 걷는 코스',
         rating: 4.2,
-        type: 'city'
+        type: 'city',
+        imageUrl: getDefaultImageForLocation('청계천')
       }
     ];
 
@@ -178,7 +183,8 @@ export default function WalkPage() {
         steps: Math.floor((item.distance || Math.random() * 5 + 1) * 1200), // km * 1200보
         description: item.description || `${searchLocation} 지역의 트래킹 코스`,
         rating: item.rating || (Math.random() * 2 + 3).toFixed(1), // 3.0-5.0
-        type: item.type || ['park', 'city', 'river'][Math.floor(Math.random() * 3)]
+        type: item.type || ['park', 'city', 'river'][Math.floor(Math.random() * 3)],
+        imageUrl: getDefaultImageForLocation(item.name || searchLocation)
       }));
 
       // 검색된 위치의 위도/경도 정보 업데이트
@@ -210,7 +216,8 @@ export default function WalkPage() {
           steps: 3500,
           description: `${searchLocation} 지역의 트래킹 코스`,
           rating: 4.1,
-          type: 'city'
+          type: 'city',
+          imageUrl: getDefaultImageForLocation(searchLocation)
         }
       ];
       
@@ -361,7 +368,23 @@ export default function WalkPage() {
                     }`}
                     onClick={() => setSelectedCourse(course)}
                   >
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-4">
+                      {/* 이미지 섹션 */}
+                      {course.imageUrl && (
+                        <div className="flex-shrink-0">
+                          <img
+                            src={course.imageUrl}
+                            alt={course.name}
+                            className="w-20 h-20 object-cover rounded-lg"
+                            onError={(e) => {
+                              // 이미지 로드 실패 시 숨김
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
+                      
+                      {/* 텍스트 정보 섹션 */}
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
                           {getTypeIcon(course.type)}

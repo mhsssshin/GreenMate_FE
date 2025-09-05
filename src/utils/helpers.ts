@@ -238,3 +238,60 @@ export function getCurrentSteps(): number {
   }
   return 0;
 }
+
+/**
+ * Unsplash API를 이용한 이미지 검색
+ */
+export async function searchImages(query: string, count: number = 3): Promise<string[]> {
+  try {
+    // Unsplash API 키 (실제 사용시 환경변수로 관리)
+    const UNSPLASH_ACCESS_KEY = 'YOUR_UNSPLASH_ACCESS_KEY';
+    
+    const response = await fetch(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape`,
+      {
+        headers: {
+          'Authorization': `Client-ID ${UNSPLASH_ACCESS_KEY}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Unsplash API 호출 실패');
+    }
+
+    const data = await response.json();
+    return data.results.map((photo: any) => photo.urls.regular);
+  } catch (error) {
+    console.error('이미지 검색 중 오류:', error);
+    return [];
+  }
+}
+
+/**
+ * 검색어에 따른 기본 이미지 반환 (API 없이 사용)
+ */
+export function getDefaultImageForLocation(location: string): string {
+  const locationImages: { [key: string]: string } = {
+    '강남': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+    '여의도': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+    '한강': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+    '북한산': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+    '서울숲': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop',
+    '청계천': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+    '인사동': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+    '홍대': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+    '명동': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+    '이태원': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+  };
+
+  // 검색어에서 키워드 찾기
+  for (const [keyword, imageUrl] of Object.entries(locationImages)) {
+    if (location.includes(keyword)) {
+      return imageUrl;
+    }
+  }
+
+  // 기본 이미지 (걷기/산책 관련)
+  return 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop';
+}
