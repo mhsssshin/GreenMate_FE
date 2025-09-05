@@ -240,6 +240,35 @@ export function getCurrentSteps(): number {
 }
 
 /**
+ * 쿠키에서 위치 정보를 가져오는 함수
+ */
+export function getLocationFromCookie(): { lat: number; lng: number } | null {
+  if (typeof document === 'undefined') return null;
+
+  const cookie = document.cookie;
+  const match = cookie.match(/greenmate_steps=([^;]+)/);
+  
+  if (match) {
+    const value = match[1];
+    
+    // lat과 lng 추출
+    const latMatch = value.match(/lat=([^&]+)/);
+    const lngMatch = value.match(/lng=([^&]+)/);
+    
+    if (latMatch && lngMatch) {
+      const lat = parseFloat(latMatch[1]);
+      const lng = parseFloat(lngMatch[1]);
+      
+      if (!isNaN(lat) && !isNaN(lng)) {
+        return { lat, lng };
+      }
+    }
+  }
+  
+  return null;
+}
+
+/**
  * Unsplash API를 이용한 이미지 검색
  */
 export async function searchImages(query: string, count: number = 3): Promise<string[]> {

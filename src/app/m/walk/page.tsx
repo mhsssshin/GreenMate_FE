@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { MapPin, Clock, Footprints, Navigation, Search, Star, Mountain, TreePine, Trophy, Target, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Location } from '@/types';
 import { getCurrentLocation, watchLocation } from '@/lib/bridge';
-import { getCurrentSteps, getDefaultImageForLocation } from '@/utils/helpers';
+import { getCurrentSteps, getDefaultImageForLocation, getLocationFromCookie } from '@/utils/helpers';
 
 interface TrackingCourse {
   id: string;
@@ -45,51 +45,67 @@ export default function WalkPage() {
     isCompleted: false // 완료 여부
   });
 
-  // GET Parameter에서 GPS 좌표 가져오기
+  // 위치 정보 초기화 (쿠키 우선, GET Parameter, 브릿지 순서)
   useEffect(() => {
-    const lat = searchParams.get('lat');
-    const lng = searchParams.get('lng');
-    
-    if (lat && lng) {
-      // GET Parameter로 받은 GPS 좌표 사용
-      const gpsLocation: Location = {
-        lat: parseFloat(lat),
-        lng: parseFloat(lng)
-      };
-      setCurrentLocation(gpsLocation);
-      setSearchLocation(`현재위치(${lat}/${lng})`);
+    const initLocation = async () => {
+      let location: Location | null = null;
+      let locationSource = '';
       
-      // 검색 모드가 아닐 때만 현재 위치 표시
-      if (!isSearchMode) {
-        setDisplayLocation(`위도: ${lat}, 경도: ${lng}`);
+      // 1. 쿠키에서 위치 정보 가져오기 (최우선)
+      const cookieLocation = getLocationFromCookie();
+      if (cookieLocation) {
+        location = cookieLocation;
+        locationSource = '쿠키';
+        console.log('쿠키에서 위치 정보 가져옴:', cookieLocation);
       }
       
-      // GPS 좌표 기반 코스 자동 로드
-      loadNearbyCourses(gpsLocation);
-    } else {
-      // GET Parameter가 없으면 기본 위치 가져오기
-      const initLocation = async () => {
-        try {
-          const location = await getCurrentLocation();
-          setCurrentLocation(location);
-          setSearchLocation(`현재위치(${location.lat.toFixed(4)}/${location.lng.toFixed(4)})`);
+      // 2. GET Parameter에서 GPS 좌표 가져오기
+      if (!location) {
+        const lat = searchParams.get('lat');
+        const lng = searchParams.get('lng');
+        
+        if (lat && lng) {
+          const latitude = parseFloat(lat);
+          const longitude = parseFloat(lng);
           
-          // 검색 모드가 아닐 때만 현재 위치 표시
-          if (!isSearchMode) {
-            setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)}`);
+          if (!isNaN(latitude) && !isNaN(longitude)) {
+            location = { lat: latitude, lng: longitude };
+            locationSource = 'GET Parameter';
+            console.log('GET Parameter에서 위치 정보 가져옴:', location);
           }
-          
-          // 현재 위치 기반 코스 자동 로드
-          loadNearbyCourses(location);
+        }
+      }
+      
+      // 3. 브릿지를 통한 현재 위치 가져오기
+      if (!location) {
+        try {
+          location = await getCurrentLocation();
+          locationSource = '브릿지';
+          console.log('브릿지에서 위치 정보 가져옴:', location);
         } catch (error) {
           console.error('위치 정보를 가져올 수 없습니다:', error);
           setDisplayLocation('위치 정보를 가져올 수 없습니다');
+          return;
         }
-      };
-
-      initLocation();
-    }
-  }, [searchParams]);
+      }
+      
+      // 위치 정보 설정
+      if (location) {
+        setCurrentLocation(location);
+        setSearchLocation(`현재위치(${location.lat.toFixed(4)}/${location.lng.toFixed(4)})`);
+        
+        // 검색 모드가 아닐 때만 현재 위치 표시
+        if (!isSearchMode) {
+          setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)} (${locationSource})`);
+        }
+        
+        // 위치 기반 코스 자동 로드
+        loadNearbyCourses(location);
+      }
+    };
+    
+    initLocation();
+  }, [searchParams, isSearchMode]);
 
   // 현재 걸음 수 가져오기
   useEffect(() => {
@@ -355,8 +371,15 @@ export default function WalkPage() {
     setTrackingCourses([]);
     setSelectedCourse(null);
     
-    // 현재 위치로 되돌리기
-    if (currentLocation) {
+    // 쿠키에서 위치 정보 다시 가져오기
+    const cookieLocation = getLocationFromCookie();
+    if (cookieLocation) {
+      setCurrentLocation(cookieLocation);
+      setSearchLocation(`현재위치(${cookieLocation.lat.toFixed(4)}/${cookieLocation.lng.toFixed(4)})`);
+      setDisplayLocation(`위도: ${cookieLocation.lat.toFixed(4)}, 경도: ${cookieLocation.lng.toFixed(4)} (쿠키)`);
+      loadNearbyCourses(cookieLocation);
+    } else if (currentLocation) {
+      // 쿠키에 위치 정보가 없으면 기존 위치 사용
       setDisplayLocation(`위도: ${currentLocation.lat}, 경도: ${currentLocation.lng}`);
       loadNearbyCourses(currentLocation);
     }
