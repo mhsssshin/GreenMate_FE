@@ -155,7 +155,7 @@ export default function WalkPage() {
     const courses: TrackingCourse[] = [];
     
     // 1. 많은 걸음 코스 (남은 걸음수의 120%)
-    const manySteps = Math.max(remainingSteps * 1.2, 1000);
+    const manySteps = Math.round(Math.max(remainingSteps * 1.2, 1000));
     const manyDistance = (manySteps * 0.7) / 1000; // 걸음수를 km로 변환 (평균 보폭 0.7m)
     
     courses.push({
@@ -173,7 +173,7 @@ export default function WalkPage() {
     });
     
     // 2. 표준 걸음 코스 (남은 걸음수와 동일)
-    const standardSteps = Math.max(remainingSteps, 1000);
+    const standardSteps = Math.round(Math.max(remainingSteps, 1000));
     const standardDistance = (standardSteps * 0.7) / 1000;
     
     courses.push({
@@ -191,7 +191,7 @@ export default function WalkPage() {
     });
     
     // 3. 적은 걸음 코스 (남은 걸음수의 80%)
-    const fewSteps = Math.max(remainingSteps * 0.8, 500);
+    const fewSteps = Math.round(Math.max(remainingSteps * 0.8, 500));
     const fewDistance = (fewSteps * 0.7) / 1000;
     
     courses.push({
@@ -708,7 +708,7 @@ export default function WalkPage() {
                   }`}
                     onClick={() => setSelectedCourse(course)}
                   >
-                    <div className="flex items-start space-x-4">
+                    <div className="flex items-center space-x-4">
                       {/* 이미지 섹션 */}
                       {course.imageUrl && (
                         <div className="flex-shrink-0">
@@ -724,43 +724,46 @@ export default function WalkPage() {
                         </div>
                       )}
                       
-                      {/* 텍스트 정보 섹션 */}
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
+                      {/* 텍스트 정보 섹션 - 이미지 하단까지 사용 */}
+                    <div className="flex-1 flex flex-col justify-between h-20">
+                      {/* 상단: 제목과 설명 */}
+                      <div>
+                        <div className="flex items-center space-x-2 mb-1">
                           {getTypeIcon(course.type)}
-                          <h3 className="font-medium text-gray-900">{course.name}</h3>
+                          <h3 className="font-medium text-gray-900 text-sm">{course.name}</h3>
                           {selectedCourse?.id === course.id && (
                           <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
                         )}
+                        </div>
+                        <p className="text-xs text-gray-600 mb-1">{course.description}</p>
+                        <p className="text-xs text-gray-500">{course.location}</p>
                       </div>
-                        
-                        <p className="text-sm text-gray-600 mb-2">{course.description}</p>
-                        <p className="text-sm text-gray-500 mb-3">{course.location}</p>
-                        
-                        <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <div className="flex items-center space-x-1">
-                          <Navigation size={14} />
-                              <span>{course.distance}km</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Clock size={14} />
-                              <span>{course.duration}분</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Footprints size={14} />
-                              <span>{course.steps}보</span>
-                            </div>
+                      
+                      {/* 하단: 거리, 시간, 걸음수, 난이도, 평점을 한 줄에 */}
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center space-x-3 text-gray-500">
+                          <div className="flex items-center space-x-1">
+                            <Navigation size={12} />
+                            <span>{course.distance}km</span>
                           </div>
-                          
-                          <div className="flex items-center space-x-2">
-                            <div className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}>
-                              {getDifficultyLabel(course.difficulty)}
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Star size={14} className="text-yellow-500 fill-current" />
-                              <span className="text-sm text-gray-600">{course.rating}</span>
-                            </div>
+                          <div className="flex items-center space-x-1">
+                            <Clock size={12} />
+                            <span>{course.duration}분</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Footprints size={12} />
+                            <span>{course.steps.toLocaleString()}보</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <div className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}>
+                            {getDifficultyLabel(course.difficulty)}
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Star size={12} className="text-yellow-500 fill-current" />
+                            <span className="text-gray-600">{course.rating}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
