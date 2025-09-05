@@ -1,7 +1,7 @@
 // API 유틸리티 함수들
 import { SignupRequest, SignupResponse, LoginRequest, LoginResponse } from '@/types';
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = 'http://greenmate.ddns.net';
 
 // 공통 fetch 함수
 async function apiRequest<T>(
@@ -14,10 +14,12 @@ async function apiRequest<T>(
     'Content-Type': 'application/json',
   };
 
-  // 토큰이 있으면 Authorization 헤더 추가
-  const token = localStorage.getItem('accessToken');
-  if (token) {
-    defaultHeaders['Authorization'] = `Bearer ${token}`;
+  // 토큰이 있으면 Authorization 헤더 추가 (클라이언트 사이드에서만)
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
   }
 
   const config: RequestInit = {
@@ -87,34 +89,49 @@ export const authAPI = {
 export const tokenManager = {
   // 토큰 저장
   setToken: (token: string) => {
-    localStorage.setItem('accessToken', token);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', token);
+    }
   },
 
   // 토큰 가져오기
   getToken: (): string | null => {
-    return localStorage.getItem('accessToken');
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('accessToken');
+    }
+    return null;
   },
 
   // 토큰 삭제
   removeToken: () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+    }
   },
 
   // 로그인 상태 확인
   isLoggedIn: (): boolean => {
-    return !!localStorage.getItem('accessToken');
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem('accessToken');
+    }
+    return false;
   },
 
   // 사용자 정보 저장
   setUser: (user: any) => {
-    localStorage.setItem('user', JSON.stringify(user));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
   },
 
   // 사용자 정보 가져오기
   getUser: (): any | null => {
-    const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
+    if (typeof window !== 'undefined') {
+      const userStr = localStorage.getItem('user');
+      return userStr ? JSON.parse(userStr) : null;
+    }
+    return null;
   },
 };
 

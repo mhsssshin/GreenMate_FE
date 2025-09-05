@@ -24,6 +24,7 @@ export default function SignupPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string>('');
 
   // 폼 유효성 검사
   const validateForm = (): boolean => {
@@ -60,17 +61,17 @@ export default function SignupPage() {
     }
 
     // 나이 검사
-    if (formData.age < 13 || formData.age > 100) {
+    if (!formData.age || formData.age < 13 || formData.age > 100) {
       newErrors.age = '나이는 13-100세 사이여야 합니다.';
     }
 
     // 키 검사
-    if (formData.height < 100 || formData.height > 250) {
+    if (!formData.height || formData.height < 100 || formData.height > 250) {
       newErrors.height = '키는 100-250cm 사이여야 합니다.';
     }
 
     // 몸무게 검사
-    if (formData.weight < 30 || formData.weight > 200) {
+    if (!formData.weight || formData.weight < 30 || formData.weight > 200) {
       newErrors.weight = '몸무게는 30-200kg 사이여야 합니다.';
     }
 
@@ -81,6 +82,9 @@ export default function SignupPage() {
   // 폼 제출
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // 에러 메시지 초기화
+    setSubmitError('');
     
     if (!validateForm()) {
       return;
@@ -100,7 +104,8 @@ export default function SignupPage() {
       router.push('/sns');
     } catch (error) {
       console.error('회원가입 오류:', error);
-      alert(error instanceof Error ? error.message : '회원가입에 실패했습니다.');
+      const errorMessage = error instanceof Error ? error.message : '회원가입에 실패했습니다.';
+      setSubmitError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +117,11 @@ export default function SignupPage() {
     
     // 에러 메시지 초기화
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
     }
   };
 
@@ -149,6 +158,16 @@ export default function SignupPage() {
 
         {/* 회원가입 폼 */}
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* 전체 에러 메시지 */}
+          {submitError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-center">
+                <X className="h-5 w-5 text-red-400 mr-2" />
+                <p className="text-sm text-red-600">{submitError}</p>
+              </div>
+            </div>
+          )}
+          
           {/* 이메일 */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
