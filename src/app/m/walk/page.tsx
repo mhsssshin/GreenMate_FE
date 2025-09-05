@@ -226,34 +226,56 @@ export default function WalkPage() {
       }
 
       const responseData = await response.json();
+      console.log('API 응답 데이터:', responseData); // 디버깅용 로그
       
       // API 응답 구조 확인 및 데이터 추출
       let data = [];
       if (responseData.status === 'success' && responseData.data) {
         // 단일 결과인 경우 배열로 변환
         data = [responseData.data];
+        console.log('단일 결과 데이터:', data); // 디버깅용 로그
       } else if (Array.isArray(responseData)) {
         // 배열인 경우 그대로 사용
         data = responseData;
+        console.log('배열 결과 데이터:', data); // 디버깅용 로그
       } else {
         // 기타 경우 빈 배열
         data = [];
+        console.log('빈 데이터'); // 디버깅용 로그
       }
       
       // API 응답 데이터를 TrackingCourse 형태로 변환
-      const searchResults: TrackingCourse[] = data.map((item: any, index: number) => ({
-        id: `search-${index}`,
-        name: item.name || `${searchInput} 주변 걷기`,
-        location: item.address || searchInput,
-        distance: item.distance || Math.random() * 5 + 1, // 1-6km
-        duration: Math.floor((item.distance || Math.random() * 5 + 1) * 12), // km * 12분
-        difficulty: item.difficulty || ['easy', 'medium', 'hard'][Math.floor(Math.random() * 3)],
-        steps: Math.floor((item.distance || Math.random() * 5 + 1) * 1200), // km * 1200보
-        description: item.description || `${searchInput} 지역의 트래킹 코스`,
-        rating: item.rating || (Math.random() * 2 + 3).toFixed(1), // 3.0-5.0
-        type: item.type || ['park', 'city', 'river'][Math.floor(Math.random() * 3)],
-        imageUrl: getDefaultImageForLocation(item.name || searchInput)
-      }));
+      const searchResults: TrackingCourse[] = data.map((item: any, index: number) => {
+        // 더 의미있는 이름 생성
+        let courseName = '';
+        if (item.name) {
+          courseName = item.name;
+        } else if (item.address) {
+          // 주소에서 지역명 추출 (예: "서울특별시 강남구 강남대로 390" -> "강남구")
+          const addressParts = item.address.split(' ');
+          if (addressParts.length >= 2) {
+            courseName = `${addressParts[1]} ${searchInput} 걷기 코스`;
+          } else {
+            courseName = `${searchInput} 걷기 코스`;
+          }
+        } else {
+          courseName = `${searchInput} 걷기 코스`;
+        }
+        
+        return {
+          id: `search-${index}`,
+          name: courseName,
+          location: item.address || searchInput,
+          distance: item.distance || Math.random() * 5 + 1, // 1-6km
+          duration: Math.floor((item.distance || Math.random() * 5 + 1) * 12), // km * 12분
+          difficulty: item.difficulty || ['easy', 'medium', 'hard'][Math.floor(Math.random() * 3)],
+          steps: Math.floor((item.distance || Math.random() * 5 + 1) * 1200), // km * 1200보
+          description: item.description || `${searchInput} 지역의 트래킹 코스`,
+          rating: item.rating || (Math.random() * 2 + 3).toFixed(1), // 3.0-5.0
+          type: item.type || ['park', 'city', 'river'][Math.floor(Math.random() * 3)],
+          imageUrl: getDefaultImageForLocation(item.name || searchInput)
+        };
+      });
 
       // 검색된 위치의 위도/경도 정보 업데이트
       if (data.length > 0) {
