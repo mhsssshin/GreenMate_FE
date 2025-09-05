@@ -151,11 +151,11 @@ export default function WalkPage() {
     remainingSteps: number, 
     locationName: string
   ): TrackingCourse[] => {
-    // 남은 걸음수에 따른 3가지 코스 생성
+    // 남은 걸음수에 따른 3가지 코스 생성 (최대 5000보 제한)
     const courses: TrackingCourse[] = [];
     
-    // 1. 많은 걸음 코스 (남은 걸음수의 120%)
-    const manySteps = Math.round(Math.max(remainingSteps * 1.2, 1000));
+    // 1. 많은 걸음 코스 (남은 걸음수의 120%, 최대 5000보)
+    const manySteps = Math.round(Math.min(Math.max(remainingSteps * 1.2, 1000), 5000));
     const manyDistance = (manySteps * 0.7) / 1000; // 걸음수를 km로 변환 (평균 보폭 0.7m)
     
     courses.push({
@@ -164,16 +164,16 @@ export default function WalkPage() {
       location: locationName,
       distance: Math.round(manyDistance * 10) / 10,
       duration: Math.round(manyDistance * 12), // km당 12분
-      difficulty: 'hard',
+      difficulty: manySteps >= 4000 ? 'hard' : 'medium',
       steps: manySteps,
-      description: `목표 걸음수를 넘어서는 도전적인 코스입니다.`,
+      description: manySteps >= 5000 ? `최대 걸음수인 5000보 코스입니다.` : `목표 걸음수를 넘어서는 도전적인 코스입니다.`,
       rating: 4.5,
       type: 'city',
       imageUrl: getDefaultImageForLocation(locationName)
     });
     
-    // 2. 표준 걸음 코스 (남은 걸음수와 동일)
-    const standardSteps = Math.round(Math.max(remainingSteps, 1000));
+    // 2. 표준 걸음 코스 (남은 걸음수와 동일, 최대 5000보)
+    const standardSteps = Math.round(Math.min(Math.max(remainingSteps, 1000), 5000));
     const standardDistance = (standardSteps * 0.7) / 1000;
     
     courses.push({
@@ -182,16 +182,16 @@ export default function WalkPage() {
       location: locationName,
       distance: Math.round(standardDistance * 10) / 10,
       duration: Math.round(standardDistance * 12),
-      difficulty: 'medium',
+      difficulty: standardSteps >= 3000 ? 'medium' : 'easy',
       steps: standardSteps,
-      description: `목표 걸음수에 딱 맞는 적당한 코스입니다.`,
+      description: standardSteps >= 5000 ? `최대 걸음수인 5000보 코스입니다.` : `목표 걸음수에 딱 맞는 적당한 코스입니다.`,
       rating: 4.3,
       type: 'city',
       imageUrl: getDefaultImageForLocation(locationName)
     });
     
-    // 3. 적은 걸음 코스 (남은 걸음수의 80%)
-    const fewSteps = Math.round(Math.max(remainingSteps * 0.8, 500));
+    // 3. 적은 걸음 코스 (남은 걸음수의 80%, 최대 5000보)
+    const fewSteps = Math.round(Math.min(Math.max(remainingSteps * 0.8, 500), 5000));
     const fewDistance = (fewSteps * 0.7) / 1000;
     
     courses.push({
@@ -202,7 +202,7 @@ export default function WalkPage() {
       duration: Math.round(fewDistance * 12),
       difficulty: 'easy',
       steps: fewSteps,
-      description: `부담 없이 즐길 수 있는 가벼운 코스입니다.`,
+      description: fewSteps >= 5000 ? `최대 걸음수인 5000보 코스입니다.` : `부담 없이 즐길 수 있는 가벼운 코스입니다.`,
       rating: 4.1,
       type: 'city',
       imageUrl: getDefaultImageForLocation(locationName)
@@ -461,28 +461,53 @@ export default function WalkPage() {
     
     setIsSharingToFeed(true);
     
-    // 하드코딩된 피드 데이터 생성
-    const feedData = {
-      id: Date.now().toString(),
-      type: 'walking_completion',
-      title: `${selectedCourse.name} 완주!`,
-      content: `오늘 ${selectedCourse.distance}km를 걸어서 ${selectedCourse.steps}보를 걸었습니다! 건강한 하루였어요! 🚶‍♀️`,
-      distance: selectedCourse.distance,
-      steps: selectedCourse.steps,
-      duration: selectedCourse.duration,
-      location: selectedCourse.location,
-      points: Math.floor(selectedCourse.distance * 100),
-      timestamp: new Date().toISOString(),
-      user: {
-        name: 'GreenMate 사용자',
-        avatar: '/images/default-avatar.svg'
-      }
+    // 1분 전 시간으로 설정
+    const oneMinuteAgo = new Date(Date.now() - 60000).toISOString();
+    
+    // SNS 피드 형식에 맞는 데이터 생성
+    const newPost = {
+      id: `walking-${Date.now()}`,
+      author: {
+        id: 'current-user',
+        nickname: 'GreenMate 사용자',
+        avatar: '/images/default-avatar.svg',
+      },
+      type: 'route' as const,
+      content: `${selectedCourse.name} 완주! 🎉 ${selectedCourse.distance}km를 걸어서 ${selectedCourse.steps.toLocaleString()}보를 걸었습니다! 건강한 하루였어요! 🚶‍♀️ #걷기완주 #건강한하루 #GreenMate`,
+      routeShare: {
+        id: `route-${Date.now()}`,
+        startedAt: Date.now() - (selectedCourse.duration * 60 * 1000),
+        endedAt: Date.now() - 60000, // 1분 전
+        origin: { 
+          lat: currentLocation?.lat || 37.5665, 
+          lng: currentLocation?.lng || 126.9780, 
+          name: selectedCourse.location 
+        },
+        destination: { 
+          lat: currentLocation?.lat || 37.5665, 
+          lng: currentLocation?.lng || 126.9780, 
+          name: selectedCourse.location 
+        },
+        chosenRoute: 'recommended' as const,
+        distanceMeters: selectedCourse.distance * 1000,
+        durationSeconds: selectedCourse.duration * 60,
+        steps: selectedCourse.steps,
+        polyline: [],
+      },
+      liked: false,
+      likeCount: 0,
+      commentCount: 0,
+      createdAt: oneMinuteAgo,
     };
     
-    // 로컬 스토리지에 피드 데이터 저장 (실제로는 API 호출)
-    const existingFeeds = JSON.parse(localStorage.getItem('feeds') || '[]');
-    existingFeeds.unshift(feedData);
-    localStorage.setItem('feeds', JSON.stringify(existingFeeds));
+    // 로컬 스토리지에서 기존 피드 데이터 가져오기
+    const existingPosts = JSON.parse(localStorage.getItem('sns-posts') || '[]');
+    
+    // 새로운 포스트를 맨 앞에 추가
+    const updatedPosts = [newPost, ...existingPosts];
+    
+    // 로컬 스토리지에 저장
+    localStorage.setItem('sns-posts', JSON.stringify(updatedPosts));
     
     // 성공 메시지
     setTimeout(() => {

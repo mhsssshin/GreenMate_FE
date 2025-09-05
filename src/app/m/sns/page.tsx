@@ -246,19 +246,54 @@ const mockPosts: Post[] = [
 ];
 
 export default function SNSPage() {
-  const [posts, setPosts] = useState<Post[]>(mockPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // 컴포넌트 마운트 시 피드 데이터 로드
+  useEffect(() => {
+    const loadPosts = () => {
+      try {
+        // 로컬 스토리지에서 사용자 생성 피드 가져오기
+        const userPosts = JSON.parse(localStorage.getItem('sns-posts') || '[]');
+        
+        // 기본 더미 데이터와 사용자 피드 합치기
+        const allPosts = [...userPosts, ...mockPosts];
+        
+        // 시간순으로 정렬 (최신순)
+        allPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        
+        setPosts(allPosts);
+      } catch (error) {
+        console.error('피드 데이터 로드 실패:', error);
+        setPosts(mockPosts);
+      }
+    };
+
+    loadPosts();
+  }, []);
+
   const handleLike = (postId: string) => {
-    setPosts(prev => prev.map(post => 
-      post.id === postId 
-        ? { 
-            ...post, 
-            liked: !post.liked, 
-            likeCount: post.liked ? post.likeCount - 1 : post.likeCount + 1 
-          }
-        : post
-    ));
+    setPosts(prev => {
+      const updatedPosts = prev.map(post => 
+        post.id === postId 
+          ? { 
+              ...post, 
+              liked: !post.liked, 
+              likeCount: post.liked ? post.likeCount - 1 : post.likeCount + 1 
+            }
+          : post
+      );
+      
+      // 로컬 스토리지에 업데이트된 피드 저장
+      try {
+        const userPosts = updatedPosts.filter(post => post.id.startsWith('walking-'));
+        localStorage.setItem('sns-posts', JSON.stringify(userPosts));
+      } catch (error) {
+        console.error('피드 업데이트 저장 실패:', error);
+      }
+      
+      return updatedPosts;
+    });
   };
 
   const formatTimeAgo = (dateString: string) => {

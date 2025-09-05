@@ -63,22 +63,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 헤더 */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3">
-        <div className="flex items-center">
-          <button
-            onClick={() => router.back()}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-          >
-            <ArrowLeft size={20} className="text-gray-600" />
-          </button>
-          <h1 className="flex-1 text-center text-lg font-semibold text-gray-900 mr-8">
-            로그인
-          </h1>
-        </div>
-      </div>
-
-      <div className="p-4 max-w-md mx-auto">
+      <div className="p-4 max-w-md mx-auto pt-16">
         {/* 로고 */}
         <div className="text-center mb-8">
           <Image
@@ -103,8 +88,8 @@ export default function LoginPage() {
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300'
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors text-gray-900 ${
+                errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
               }`}
               placeholder="example@email.com"
             />
@@ -123,8 +108,8 @@ export default function LoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
-                className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors ${
-                  errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors text-gray-900 ${
+                  errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
                 }`}
                 placeholder="비밀번호를 입력하세요"
               />
