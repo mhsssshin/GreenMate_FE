@@ -195,6 +195,74 @@ export default function WalkPage() {
     setTrackingCourses(mockCourses);
   };
 
+  // 남은 걸음수 기반 트래킹 코스 생성 함수
+  const generateTrackingCourses = (
+    lat: number, 
+    lng: number, 
+    remainingSteps: number, 
+    locationName: string
+  ): TrackingCourse[] => {
+    // 남은 걸음수에 따른 3가지 코스 생성
+    const courses: TrackingCourse[] = [];
+    
+    // 1. 많은 걸음 코스 (남은 걸음수의 120%)
+    const manySteps = Math.max(remainingSteps * 1.2, 1000);
+    const manyDistance = (manySteps * 0.7) / 1000; // 걸음수를 km로 변환 (평균 보폭 0.7m)
+    
+    courses.push({
+      id: 'search-many',
+      name: `${locationName} - 많은 걸음 코스`,
+      location: locationName,
+      distance: Math.round(manyDistance * 10) / 10,
+      duration: Math.round(manyDistance * 12), // km당 12분
+      difficulty: 'hard',
+      steps: manySteps,
+      description: `목표 걸음수를 넘어서는 도전적인 코스입니다.`,
+      rating: '4.5',
+      type: 'city',
+      imageUrl: getDefaultImageForLocation(locationName)
+    });
+    
+    // 2. 표준 걸음 코스 (남은 걸음수와 동일)
+    const standardSteps = Math.max(remainingSteps, 1000);
+    const standardDistance = (standardSteps * 0.7) / 1000;
+    
+    courses.push({
+      id: 'search-standard',
+      name: `${locationName} - 표준 걸음 코스`,
+      location: locationName,
+      distance: Math.round(standardDistance * 10) / 10,
+      duration: Math.round(standardDistance * 12),
+      difficulty: 'medium',
+      steps: standardSteps,
+      description: `목표 걸음수에 딱 맞는 적당한 코스입니다.`,
+      rating: '4.3',
+      type: 'city',
+      imageUrl: getDefaultImageForLocation(locationName)
+    });
+    
+    // 3. 적은 걸음 코스 (남은 걸음수의 80%)
+    const fewSteps = Math.max(remainingSteps * 0.8, 500);
+    const fewDistance = (fewSteps * 0.7) / 1000;
+    
+    courses.push({
+      id: 'search-few',
+      name: `${locationName} - 적은 걸음 코스`,
+      location: locationName,
+      distance: Math.round(fewDistance * 10) / 10,
+      duration: Math.round(fewDistance * 12),
+      difficulty: 'easy',
+      steps: fewSteps,
+      description: `부담 없이 즐길 수 있는 가벼운 코스입니다.`,
+      rating: '4.1',
+      type: 'city',
+      imageUrl: getDefaultImageForLocation(locationName)
+    });
+    
+    console.log('생성된 트래킹 코스:', courses);
+    return courses;
+  };
+
   // 다른 곳에서 시작하기 버튼 클릭
   const enableSearchField = () => {
     setIsSearchFieldEnabled(true);
@@ -211,18 +279,12 @@ export default function WalkPage() {
     setIsSearchMode(true); // 검색 모드 활성화
     
     try {
-      // 새로운 geocode API 호출 (POST 방식)
-      const response = await fetch('http://103.244.108.70:9000/api/v1/geocode', {
-        method: 'POST',
+      // 위치 검색 API 호출 (GET 방식)
+      const response = await fetch(`http://greenmate.ddns.net/api/locations/search?query=${encodeURIComponent(searchInput)}`, {
+        method: 'GET',
         headers: {
-          'accept': '*/*',
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: JSON.stringify({
-          keyword: searchInput,
-          locationType: "",
-          region: ""
-        })
+          'accept': 'application/json',
+        }
       });
 
       if (!response.ok) {
@@ -232,69 +294,42 @@ export default function WalkPage() {
       const responseData = await response.json();
       console.log('API 응답 데이터:', responseData); // 디버깅용 로그
       
-      // API 응답 구조 확인 및 데이터 추출
-      let data = [];
-      if (responseData.status === 'success' && responseData.data) {
-        // 단일 결과인 경우 배열로 변환
-        data = [responseData.data];
-        console.log('단일 결과 데이터:', data); // 디버깅용 로그
-      } else if (Array.isArray(responseData)) {
-        // 배열인 경우 그대로 사용
-        data = responseData;
-        console.log('배열 결과 데이터:', data); // 디버깅용 로그
-      } else {
-        // 기타 경우 빈 배열
-        data = [];
-        console.log('빈 데이터'); // 디버깅용 로그
+      // API 응답은 배열 형태로 직접 반환됨
+      const data = Array.isArray(responseData) ? responseData : [];
+      console.log('위치 검색 결과:', data);
+      
+      if (data.length === 0) {
+        throw new Error('검색 결과가 없습니다.');
       }
       
-      // API 응답 데이터를 TrackingCourse 형태로 변환
-      const searchResults: TrackingCourse[] = data.map((item: any, index: number) => {
-        // 더 의미있는 이름 생성
-        let courseName = '';
-        if (item.name) {
-          courseName = item.name;
-        } else if (item.address) {
-          // 주소에서 지역명 추출 (예: "서울특별시 강남구 강남대로 390" -> "강남구")
-          const addressParts = item.address.split(' ');
-          if (addressParts.length >= 2) {
-            courseName = `${addressParts[1]} ${searchInput} 걷기 코스`;
-          } else {
-            courseName = `${searchInput} 걷기 코스`;
-          }
-        } else {
-          courseName = `${searchInput} 걷기 코스`;
-        }
-        
-        return {
-          id: `search-${index}`,
-          name: courseName,
-          location: item.address || searchInput,
-          distance: item.distance || Math.random() * 5 + 1, // 1-6km
-          duration: Math.floor((item.distance || Math.random() * 5 + 1) * 12), // km * 12분
-          difficulty: item.difficulty || ['easy', 'medium', 'hard'][Math.floor(Math.random() * 3)],
-          steps: Math.floor((item.distance || Math.random() * 5 + 1) * 1200), // km * 1200보
-          description: item.description || `${searchInput} 지역의 트래킹 코스`,
-          rating: item.rating || (Math.random() * 2 + 3).toFixed(1), // 3.0-5.0
-          type: item.type || ['park', 'city', 'river'][Math.floor(Math.random() * 3)],
-          imageUrl: getDefaultImageForLocation(item.name || searchInput)
-        };
-      });
+      // 첫 번째 검색 결과에서 위도/경도 추출
+      const firstResult = data[0];
+      const searchLat = firstResult.latitude;
+      const searchLng = firstResult.longitude;
+      
+      console.log('검색된 위치:', { lat: searchLat, lng: searchLng });
+      
+      // 남은 걸음수 계산
+      const remainingSteps = dailyGoalSteps - currentSteps;
+      console.log('남은 걸음수:', remainingSteps);
+      
+      // 남은 걸음수 기반으로 트래킹 코스 3개 생성
+      const searchResults: TrackingCourse[] = generateTrackingCourses(
+        searchLat, 
+        searchLng, 
+        remainingSteps, 
+        firstResult.name || searchInput
+      );
 
       // 검색된 위치의 위도/경도 정보 업데이트
-      if (data.length > 0) {
-        const firstResult = data[0];
-        if (firstResult.latitude && firstResult.longitude) {
-          setCurrentLocation({
-            lat: firstResult.latitude,
-            lng: firstResult.longitude
-          });
-          // 검색된 위치로 현재 위치 표시 업데이트 (검색어 기반)
-          setSearchLocation(`현재위치(${firstResult.latitude.toFixed(4)}/${firstResult.longitude.toFixed(4)})`);
-          // 검색 모드에서는 API에서 받은 좌표 표시
-          setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude} (검색)`);
-        }
-      }
+      setCurrentLocation({
+        lat: searchLat,
+        lng: searchLng
+      });
+      // 검색된 위치로 현재 위치 표시 업데이트
+      setSearchLocation(`현재위치(${searchLat.toFixed(4)}/${searchLng.toFixed(4)})`);
+      // 검색 모드에서는 API에서 받은 좌표 표시
+      setDisplayLocation(`위도: ${searchLat}, 경도: ${searchLng} (검색)`);
 
       setTrackingCourses(searchResults);
       
