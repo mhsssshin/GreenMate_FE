@@ -168,12 +168,18 @@ export default function WalkPage() {
     setIsSearching(true);
     
     try {
-      // 백엔드 API 직접 호출 (포트 8080)
-      const response = await fetch(`http://103.244.108.70:8080/api/locations/search?query=${encodeURIComponent(searchLocation.trim())}`, {
-        method: 'GET',
+      // 새로운 geocode API 호출 (POST 방식)
+      const response = await fetch('http://103.244.108.70:9000/api/v1/geocode', {
+        method: 'POST',
         headers: {
+          'accept': '*/*',
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          keyword: searchLocation,
+          locationType: "",
+          region: ""
+        })
       });
 
       if (!response.ok) {
@@ -202,8 +208,8 @@ export default function WalkPage() {
         const firstResult = data[0];
         if (firstResult.latitude && firstResult.longitude) {
           setCurrentLocation({
-            lat: firstResult.latitude,
-            lng: firstResult.longitude
+            latitude: firstResult.latitude,
+            longitude: firstResult.longitude
           });
           setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude}`);
         }
