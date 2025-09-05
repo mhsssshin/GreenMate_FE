@@ -39,6 +39,8 @@ export default function WalkPage() {
   const [dailyGoalSteps] = useState<number>(Math.floor(Math.random() * (14000 - 9000 + 1)) + 9000); // 9000~14000 사이 랜덤 목표 걸음 수
   const [isSharingToFeed, setIsSharingToFeed] = useState(false); // 피드 공유 상태
   const [earnedPoints, setEarnedPoints] = useState<number>(0); // 획득한 포인트
+  const [trackingPath, setTrackingPath] = useState<[number, number][]>([]); // 트래킹 경로
+  const [pathShape, setPathShape] = useState<'square' | 'star' | 'heart'>('square'); // 경로 모양
   
   // 트래킹 진행 상태
   const [isTracking, setIsTracking] = useState(false);
@@ -377,9 +379,77 @@ export default function WalkPage() {
     }
   };
 
+  // 트래킹 경로 생성 함수들
+  const generateSquarePath = (centerLat: number, centerLng: number, size: number = 0.005): [number, number][] => {
+    const halfSize = size / 2;
+    return [
+      [centerLat - halfSize, centerLng - halfSize], // 왼쪽 위
+      [centerLat - halfSize, centerLng + halfSize], // 오른쪽 위
+      [centerLat + halfSize, centerLng + halfSize], // 오른쪽 아래
+      [centerLat + halfSize, centerLng - halfSize], // 왼쪽 아래
+      [centerLat - halfSize, centerLng - halfSize], // 시작점으로 돌아가기
+    ];
+  };
+
+  const generateStarPath = (centerLat: number, centerLng: number, size: number = 0.005): [number, number][] => {
+    const points: [number, number][] = [];
+    const outerRadius = size;
+    const innerRadius = size * 0.4;
+    
+    for (let i = 0; i < 10; i++) {
+      const angle = (i * Math.PI) / 5;
+      const radius = i % 2 === 0 ? outerRadius : innerRadius;
+      const lat = centerLat + radius * Math.cos(angle - Math.PI / 2);
+      const lng = centerLng + radius * Math.sin(angle - Math.PI / 2);
+      points.push([lat, lng]);
+    }
+    
+    // 시작점으로 돌아가기
+    points.push(points[0]);
+    return points;
+  };
+
+  const generateHeartPath = (centerLat: number, centerLng: number, size: number = 0.005): [number, number][] => {
+    const points: [number, number][] = [];
+    const scale = size;
+    
+    for (let t = 0; t <= 2 * Math.PI; t += 0.1) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+      
+      const lat = centerLat + (y * scale) / 100;
+      const lng = centerLng + (x * scale) / 100;
+      points.push([lat, lng]);
+    }
+    
+    return points;
+  };
+
+  // 랜덤 경로 모양 선택 및 경로 생성
+  const generateRandomTrackingPath = (centerLat: number, centerLng: number): [number, number][] => {
+    const shapes: ('square' | 'star' | 'heart')[] = ['square', 'star', 'heart'];
+    const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+    setPathShape(randomShape);
+    
+    switch (randomShape) {
+      case 'square':
+        return generateSquarePath(centerLat, centerLng);
+      case 'star':
+        return generateStarPath(centerLat, centerLng);
+      case 'heart':
+        return generateHeartPath(centerLat, centerLng);
+      default:
+        return generateSquarePath(centerLat, centerLng);
+    }
+  };
+
   // 트래킹 시작
   const startTracking = () => {
-    if (selectedCourse) {
+    if (selectedCourse && currentLocation) {
+      // 랜덤 트래킹 경로 생성
+      const path = generateRandomTrackingPath(currentLocation.lat, currentLocation.lng);
+      setTrackingPath(path);
+      
       setIsTracking(true);
       setTrackingProgress({
         elapsedTime: 0,
@@ -526,7 +596,7 @@ export default function WalkPage() {
         distanceMeters: selectedCourse.distance * 1000,
         durationSeconds: selectedCourse.duration * 60,
         steps: selectedCourse.steps,
-        polyline: [],
+        polyline: trackingPath,
       },
       liked: false,
       likeCount: 0,
@@ -728,14 +798,14 @@ export default function WalkPage() {
 
           {/* 트래킹 완료 화면 */}
           {trackingProgress.isCompleted && selectedCourse && (
-            <div className="flex-1 flex flex-col items-center justify-center p-8">
-              <div className="text-center">
-                <Trophy size={80} className="text-yellow-500 mx-auto mb-6" />
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">트래킹 성공!!</h2>
-                <p className="text-lg text-gray-600 mb-6">
+            <div className="flex-1 flex flex-col p-4">
+              <div className="text-center mb-6">
+                <Trophy size={80} className="text-yellow-500 mx-auto mb-4" />
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">트래킹 성공!!</h2>
+                <p className="text-lg text-gray-600 mb-4">
                   {selectedCourse.name} 완주를 축하합니다!
                 </p>
-                <div className="bg-yellow-100 rounded-lg p-4 mb-6">
+                <div className="bg-yellow-100 rounded-lg p-4 mb-4">
                   <div className="text-2xl font-bold text-yellow-800">
                     +{earnedPoints} 포인트 획득
                   </div>
@@ -743,16 +813,69 @@ export default function WalkPage() {
                     {selectedCourse.distance}km 걷기 완주 보상
                   </div>
                 </div>
-                
-                {/* 피드 공유 버튼 */}
-                <button
-                  onClick={shareToFeed}
-                  disabled={isSharingToFeed}
-                  className="bg-blue-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 disabled:bg-gray-400 transition-colors mb-4"
-                >
-                  {isSharingToFeed ? '공유 중...' : '피드에 공유하기'}
-                </button>
               </div>
+
+              {/* 트래킹 경로 지도 표시 */}
+              <div className="bg-white rounded-lg p-4 shadow-sm mb-4">
+                <div className="flex items-center space-x-2 mb-3">
+                  <MapPin size={20} className="text-blue-500" />
+                  <span className="font-medium text-gray-900">트래킹 경로</span>
+                  <span className="text-sm text-gray-500">
+                    ({pathShape === 'square' ? '□' : pathShape === 'star' ? '☆' : '♡'} 모양)
+                  </span>
+                </div>
+                
+                {/* 지도 영역 */}
+                <div className="relative bg-gray-100 rounded-lg h-48 mb-3 overflow-hidden">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-6xl mb-2">
+                        {pathShape === 'square' ? '□' : pathShape === 'star' ? '☆' : '♡'}
+                      </div>
+                      <p className="text-sm text-gray-600">트래킹 경로</p>
+                    </div>
+                  </div>
+                  
+                  {/* 경로 표시를 위한 SVG 오버레이 */}
+                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <path
+                      d={trackingPath.map((point, index) => {
+                        if (index === 0) return `M ${50 + (point[1] - (currentLocation?.lng || 0)) * 10000} ${50 + (point[0] - (currentLocation?.lat || 0)) * 10000}`;
+                        return `L ${50 + (point[1] - (currentLocation?.lng || 0)) * 10000} ${50 + (point[0] - (currentLocation?.lat || 0)) * 10000}`;
+                      }).join(' ')}
+                      stroke="#3B82F6"
+                      strokeWidth="2"
+                      fill="none"
+                      strokeDasharray="5,5"
+                    />
+                  </svg>
+                </div>
+                
+                {/* 경로 정보 */}
+                <div className="grid grid-cols-3 gap-4 text-center text-sm">
+                  <div>
+                    <div className="font-medium text-gray-900">{trackingPath.length - 1}</div>
+                    <div className="text-gray-500">경로점</div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">{selectedCourse.distance}km</div>
+                    <div className="text-gray-500">총 거리</div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">{selectedCourse.steps.toLocaleString()}</div>
+                    <div className="text-gray-500">걸음 수</div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 피드 공유 버튼 */}
+              <button
+                onClick={shareToFeed}
+                disabled={isSharingToFeed}
+                className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
+              >
+                {isSharingToFeed ? '공유 중...' : '피드에 공유하기'}
+              </button>
             </div>
           )}
 

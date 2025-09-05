@@ -3,7 +3,96 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Plus, Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react';
-import { Post } from '@/types';
+import { Post, CelebrityTrackingCourse } from '@/types';
+
+// 유명인 트래킹 코스 데이터
+const celebrityTrackingCourses: CelebrityTrackingCourse[] = [
+  {
+    id: 'celebrity-1',
+    celebrityName: '이효리',
+    celebrityAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face',
+    courseName: '한강공원 트래킹 코스',
+    courseDescription: '이효리가 즐겨 걸었던 한강공원의 아름다운 트래킹 코스입니다. 한강의 시원한 바람과 함께 도심 속 자연을 만끽할 수 있어요.',
+    courseImage: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+    mapImage: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+    trackingImage: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=400&h=300&fit=crop',
+    distance: 5.2,
+    duration: 75,
+    difficulty: 'easy',
+    location: '서울 한강공원',
+    coordinates: { lat: 37.5219, lng: 126.9240 },
+    highlights: ['한강 전망', '시원한 바람', '도심 속 자연'],
+    createdAt: new Date(Date.now() - 86400000).toISOString()
+  },
+  {
+    id: 'celebrity-2',
+    celebrityName: '유재석',
+    celebrityAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
+    courseName: '제주 올레길 1코스',
+    courseDescription: '유재석이 추천하는 제주 올레길 1코스입니다. 제주의 아름다운 해안선과 자연을 감상하며 걷는 힐링 코스예요.',
+    courseImage: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+    mapImage: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+    trackingImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+    distance: 15.1,
+    duration: 240,
+    difficulty: 'medium',
+    location: '제주도 서귀포',
+    coordinates: { lat: 33.4996, lng: 126.5312 },
+    highlights: ['제주 해안선', '올레길', '자연 경관'],
+    createdAt: new Date(Date.now() - 172800000).toISOString()
+  },
+  {
+    id: 'celebrity-3',
+    celebrityName: '김태희',
+    celebrityAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
+    courseName: '북한산 둘레길',
+    courseDescription: '김태희가 즐겨 걸었던 북한산 둘레길입니다. 서울의 아름다운 전망과 함께 산림욕을 즐길 수 있는 코스예요.',
+    courseImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+    mapImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+    trackingImage: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop',
+    distance: 8.5,
+    duration: 180,
+    difficulty: 'medium',
+    location: '서울 북한산',
+    coordinates: { lat: 37.7235, lng: 126.9990 },
+    highlights: ['서울 전망', '산림욕', '둘레길'],
+    createdAt: new Date(Date.now() - 259200000).toISOString()
+  },
+  {
+    id: 'celebrity-4',
+    celebrityName: '송혜교',
+    celebrityAvatar: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&h=100&fit=crop&crop=face',
+    courseName: '서울숲-청계천 트래킹',
+    courseDescription: '송혜교가 추천하는 서울숲에서 청계천까지의 도심 트래킹 코스입니다. 도심 속 자연과 역사를 동시에 느낄 수 있어요.',
+    courseImage: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+    mapImage: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
+    trackingImage: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=400&h=300&fit=crop',
+    distance: 3.2,
+    duration: 60,
+    difficulty: 'easy',
+    location: '서울 서울숲-청계천',
+    coordinates: { lat: 37.5446, lng: 127.0400 },
+    highlights: ['서울숲', '청계천', '도심 자연'],
+    createdAt: new Date(Date.now() - 345600000).toISOString()
+  },
+  {
+    id: 'celebrity-5',
+    celebrityName: '강동원',
+    celebrityAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+    courseName: '한양도성길 (서울성곽길)',
+    courseDescription: '강동원이 즐겨 걸었던 한양도성길입니다. 서울의 역사와 자연을 동시에 감상하며 걷는 특별한 코스예요.',
+    courseImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+    mapImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
+    trackingImage: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&h=300&fit=crop',
+    distance: 18.7,
+    duration: 360,
+    difficulty: 'hard',
+    location: '서울 한양도성길',
+    coordinates: { lat: 37.5665, lng: 126.9780 },
+    highlights: ['역사 유적', '서울 전망', '성곽길'],
+    createdAt: new Date(Date.now() - 432000000).toISOString()
+  }
+];
 
 // 더미 데이터
 const mockPosts: Post[] = [
@@ -245,6 +334,23 @@ const mockPosts: Post[] = [
   },
 ];
 
+// 유명인 트래킹 코스를 Post 형태로 변환
+const celebrityPosts: Post[] = celebrityTrackingCourses.map(course => ({
+  id: `celebrity-${course.id}`,
+  author: {
+    id: `celebrity-${course.id}`,
+    nickname: course.celebrityName,
+    avatar: course.celebrityAvatar,
+  },
+  type: 'celebrity_tracking' as const,
+  content: `🌟 ${course.celebrityName}님이 추천하는 트래킹 코스!\n\n${course.courseDescription}\n\n📍 ${course.location}\n📏 ${course.distance}km • ⏱️ ${course.duration}분 • 🎯 ${course.difficulty === 'easy' ? '쉬움' : course.difficulty === 'medium' ? '보통' : '어려움'}\n\n✨ 하이라이트: ${course.highlights.join(', ')}`,
+  celebrityTracking: course,
+  liked: false,
+  likeCount: Math.floor(Math.random() * 200) + 50,
+  commentCount: Math.floor(Math.random() * 50) + 10,
+  createdAt: course.createdAt,
+}));
+
 export default function SNSPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
@@ -256,8 +362,8 @@ export default function SNSPage() {
         // 로컬 스토리지에서 사용자 생성 피드 가져오기
         const userPosts = JSON.parse(localStorage.getItem('sns-posts') || '[]');
         
-        // 기본 더미 데이터와 사용자 피드 합치기
-        const allPosts = [...userPosts, ...mockPosts];
+        // 기본 더미 데이터, 유명인 트래킹 코스, 사용자 피드 합치기
+        const allPosts = [...userPosts, ...celebrityPosts, ...mockPosts];
         
         // 시간순으로 정렬 (최신순)
         allPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
@@ -377,6 +483,133 @@ export default function SNSPage() {
                   <div className="text-sm text-primary-600">
                     <p>{post.routeShare.origin.name} → {post.routeShare.destination.name}</p>
                     <p>{(post.routeShare.distanceMeters / 1000).toFixed(1)}km • {Math.floor(post.routeShare.durationSeconds / 60)}분 • {post.routeShare.steps}보</p>
+                  </div>
+                  
+                  {/* 트래킹 경로 표시 */}
+                  {post.routeShare.polyline && post.routeShare.polyline.length > 0 && (
+                    <div className="mt-3">
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <span className="text-xs font-medium text-gray-700">트래킹 경로</span>
+                          <span className="text-xs text-gray-500">
+                            ({post.routeShare.polyline.length - 1}개 경로점)
+                          </span>
+                        </div>
+                        <div className="relative bg-white rounded h-20 overflow-hidden">
+                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path
+                              d={post.routeShare.polyline.map((point, index) => {
+                                if (index === 0) return `M ${50 + (point[1] - post.routeShare.origin.lng) * 10000} ${50 + (point[0] - post.routeShare.origin.lat) * 10000}`;
+                                return `L ${50 + (point[1] - post.routeShare.origin.lng) * 10000} ${50 + (point[0] - post.routeShare.origin.lat) * 10000}`;
+                              }).join(' ')}
+                              stroke="#3B82F6"
+                              strokeWidth="1"
+                              fill="none"
+                              strokeDasharray="3,3"
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-xs text-gray-500">경로 시각화</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 유명인 트래킹 코스 카드 */}
+              {post.celebrityTracking && (
+                <div className="mt-3 space-y-3">
+                  {/* 코스 이미지 */}
+                  <div className="relative">
+                    <Image
+                      src={post.celebrityTracking.courseImage}
+                      alt={post.celebrityTracking.courseName}
+                      width={400}
+                      height={300}
+                      className="w-full h-48 object-cover rounded-lg"
+                      unoptimized
+                    />
+                    <div className="absolute top-3 left-3 bg-black bg-opacity-50 text-white px-2 py-1 rounded-full text-xs">
+                      ⭐ {post.celebrityTracking.celebrityName} 추천
+                    </div>
+                  </div>
+
+                  {/* 코스 정보 */}
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                    <h3 className="font-semibold text-gray-900 mb-2">{post.celebrityTracking.courseName}</h3>
+                    <div className="grid grid-cols-3 gap-4 text-sm text-gray-600 mb-3">
+                      <div className="text-center">
+                        <div className="font-medium text-gray-900">{post.celebrityTracking.distance}km</div>
+                        <div className="text-xs">거리</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-medium text-gray-900">{post.celebrityTracking.duration}분</div>
+                        <div className="text-xs">소요시간</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-medium text-gray-900">
+                          {post.celebrityTracking.difficulty === 'easy' ? '쉬움' : 
+                           post.celebrityTracking.difficulty === 'medium' ? '보통' : '어려움'}
+                        </div>
+                        <div className="text-xs">난이도</div>
+                      </div>
+                    </div>
+                    
+                    {/* 하이라이트 */}
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {post.celebrityTracking.highlights.map((highlight, index) => (
+                        <span key={index} className="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs">
+                          ✨ {highlight}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* 지도와 트래킹 이미지 */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <a 
+                        href={`https://www.google.com/maps/search/${encodeURIComponent(post.celebrityTracking.location)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative block"
+                      >
+                        <Image
+                          src={post.celebrityTracking.mapImage}
+                          alt="코스 지도"
+                          width={200}
+                          height={150}
+                          className="w-full h-24 object-cover rounded-lg hover:opacity-80 transition-opacity"
+                          unoptimized
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xs font-medium">🗺️ 코스 지도</span>
+                        </div>
+                      </a>
+                      <a 
+                        href={post.celebrityTracking.trackingImage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative block"
+                      >
+                        <Image
+                          src={post.celebrityTracking.trackingImage}
+                          alt="트래킹 모습"
+                          width={200}
+                          height={150}
+                          className="w-full h-24 object-cover rounded-lg hover:opacity-80 transition-opacity"
+                          unoptimized
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg flex items-center justify-center">
+                          <span className="text-white text-xs font-medium">🚶 트래킹 모습</span>
+                        </div>
+                      </a>
+                    </div>
+
+                    {/* 위치 정보 */}
+                    <div className="mt-3 text-sm text-gray-600">
+                      📍 {post.celebrityTracking.location}
+                    </div>
                   </div>
                 </div>
               )}

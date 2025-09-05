@@ -29,6 +29,27 @@ export interface TripRecord {
   polyline: [number, number][];
 }
 
+export interface CelebrityTrackingCourse {
+  id: string;
+  celebrityName: string;
+  celebrityAvatar?: string;
+  courseName: string;
+  courseDescription: string;
+  courseImage: string;
+  mapImage: string;
+  trackingImage: string;
+  distance: number; // km
+  duration: number; // minutes
+  difficulty: 'easy' | 'medium' | 'hard';
+  location: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  highlights: string[];
+  createdAt: string;
+}
+
 export interface Post {
   id: string;
   author: {
@@ -36,10 +57,11 @@ export interface Post {
     nickname: string;
     avatar?: string;
   };
-  type: 'text' | 'image' | 'route';
+  type: 'text' | 'image' | 'route' | 'celebrity_tracking';
   content: string;
   images?: string[];
   routeShare?: TripRecord;
+  celebrityTracking?: CelebrityTrackingCourse;
   liked: boolean;
   likeCount: number;
   commentCount: number;
