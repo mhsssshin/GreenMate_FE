@@ -22,12 +22,12 @@ export default function SignupPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errors, setErrors] = useState<Partial<SignupRequest>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   // 폼 유효성 검사
   const validateForm = (): boolean => {
-    const newErrors: Partial<SignupRequest> = {};
+    const newErrors: Record<string, string> = {};
 
     // 이메일 검사
     if (!formData.email) {
