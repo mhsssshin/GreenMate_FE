@@ -41,6 +41,20 @@ export default function WalkPage() {
   const [earnedPoints, setEarnedPoints] = useState<number>(0); // 획득한 포인트
   const [trackingPath, setTrackingPath] = useState<[number, number][]>([]); // 트래킹 경로
   const [pathShape, setPathShape] = useState<'square' | 'star' | 'heart'>('square'); // 경로 모양
+  const [trackingImage, setTrackingImage] = useState<string>(''); // 트래킹 경로 이미지
+  
+  // 트래킹 경로 이미지 배열
+  const trackingImages = [
+    '/images/heart_highlight.png',
+    '/images/star_highlight.png', 
+    '/images/triangle_highlight.png'
+  ];
+  
+  // 랜덤 이미지 선택 함수
+  const getRandomTrackingImage = () => {
+    const randomIndex = Math.floor(Math.random() * trackingImages.length);
+    return trackingImages[randomIndex];
+  };
   
   // 트래킹 진행 상태
   const [isTracking, setIsTracking] = useState(false);
@@ -431,6 +445,10 @@ export default function WalkPage() {
     const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
     setPathShape(randomShape);
     
+    // 랜덤 트래킹 이미지 선택
+    const randomImage = getRandomTrackingImage();
+    setTrackingImage(randomImage);
+    
     switch (randomShape) {
       case 'square':
         return generateSquarePath(centerLat, centerLng);
@@ -597,6 +615,7 @@ export default function WalkPage() {
         durationSeconds: selectedCourse.duration * 60,
         steps: selectedCourse.steps,
         polyline: trackingPath,
+        trackingImage: trackingImage,
       },
       liked: false,
       likeCount: 0,
@@ -825,30 +844,18 @@ export default function WalkPage() {
                   </span>
                 </div>
                 
-                {/* 지도 영역 */}
+                {/* 트래킹 경로 이미지 */}
                 <div className="relative bg-gray-100 rounded-lg h-48 mb-3 overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-6xl mb-2">
-                        {pathShape === 'square' ? '□' : pathShape === 'star' ? '☆' : '♡'}
-                      </div>
-                      <p className="text-sm text-gray-600">트래킹 경로</p>
-                    </div>
-                  </div>
-                  
-                  {/* 경로 표시를 위한 SVG 오버레이 */}
-                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <path
-                      d={trackingPath.map((point, index) => {
-                        if (index === 0) return `M ${50 + (point[1] - (currentLocation?.lng || 0)) * 10000} ${50 + (point[0] - (currentLocation?.lat || 0)) * 10000}`;
-                        return `L ${50 + (point[1] - (currentLocation?.lng || 0)) * 10000} ${50 + (point[0] - (currentLocation?.lat || 0)) * 10000}`;
-                      }).join(' ')}
-                      stroke="#3B82F6"
-                      strokeWidth="2"
-                      fill="none"
-                      strokeDasharray="5,5"
+                  {trackingImage && (
+                    <img 
+                      src={trackingImage} 
+                      alt={`${pathShape} 모양 트래킹 경로`}
+                      className="w-full h-full object-cover"
                     />
-                  </svg>
+                  )}
+                  <div className="absolute top-2 right-2 bg-white bg-opacity-80 px-2 py-1 rounded text-xs font-medium">
+                    {pathShape === 'square' ? '□' : pathShape === 'star' ? '☆' : '♡'} 모양
+                  </div>
                 </div>
                 
                 {/* 경로 정보 */}

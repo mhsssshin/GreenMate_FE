@@ -496,21 +496,31 @@ export default function SNSPage() {
                           </span>
                         </div>
                         <div className="relative bg-white rounded h-20 overflow-hidden">
-                          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                            <path
-                              d={post.routeShare.polyline.map((point, index) => {
-                                if (index === 0) return `M ${50 + (point[1] - post.routeShare!.origin.lng) * 10000} ${50 + (point[0] - post.routeShare!.origin.lat) * 10000}`;
-                                return `L ${50 + (point[1] - post.routeShare!.origin.lng) * 10000} ${50 + (point[0] - post.routeShare!.origin.lat) * 10000}`;
-                              }).join(' ')}
-                              stroke="#3B82F6"
-                              strokeWidth="1"
-                              fill="none"
-                              strokeDasharray="3,3"
+                          {post.routeShare.trackingImage ? (
+                            <img 
+                              src={post.routeShare.trackingImage} 
+                              alt="트래킹 경로"
+                              className="w-full h-full object-cover"
                             />
-                          </svg>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-xs text-gray-500">경로 시각화</span>
-                          </div>
+                          ) : (
+                            <>
+                              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path
+                                  d={post.routeShare.polyline.map((point, index) => {
+                                    if (index === 0) return `M ${50 + (point[1] - post.routeShare!.origin.lng) * 10000} ${50 + (point[0] - post.routeShare!.origin.lat) * 10000}`;
+                                    return `L ${50 + (point[1] - post.routeShare!.origin.lng) * 10000} ${50 + (point[0] - post.routeShare!.origin.lat) * 10000}`;
+                                  }).join(' ')}
+                                  stroke="#3B82F6"
+                                  strokeWidth="1"
+                                  fill="none"
+                                  strokeDasharray="3,3"
+                                />
+                              </svg>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-xs text-gray-500">경로 시각화</span>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>

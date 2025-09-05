@@ -27,6 +27,7 @@ export interface TripRecord {
   durationSeconds: number;
   steps: number;
   polyline: [number, number][];
+  trackingImage?: string;
 }
 
 export interface CelebrityTrackingCourse {
