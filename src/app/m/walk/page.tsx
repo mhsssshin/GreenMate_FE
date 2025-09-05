@@ -218,7 +218,7 @@ export default function WalkPage() {
       difficulty: 'hard',
       steps: manySteps,
       description: `목표 걸음수를 넘어서는 도전적인 코스입니다.`,
-      rating: '4.5',
+      rating: 4.5,
       type: 'city',
       imageUrl: getDefaultImageForLocation(locationName)
     });
@@ -236,7 +236,7 @@ export default function WalkPage() {
       difficulty: 'medium',
       steps: standardSteps,
       description: `목표 걸음수에 딱 맞는 적당한 코스입니다.`,
-      rating: '4.3',
+      rating: 4.3,
       type: 'city',
       imageUrl: getDefaultImageForLocation(locationName)
     });
@@ -254,7 +254,7 @@ export default function WalkPage() {
       difficulty: 'easy',
       steps: fewSteps,
       description: `부담 없이 즐길 수 있는 가벼운 코스입니다.`,
-      rating: '4.1',
+      rating: 4.1,
       type: 'city',
       imageUrl: getDefaultImageForLocation(locationName)
     });
