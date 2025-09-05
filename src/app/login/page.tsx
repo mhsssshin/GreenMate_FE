@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { LoginRequest, LoginResponse } from '@/types';
+import { LoginRequest } from '@/types';
+import { authAPI, tokenManager } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -46,31 +47,18 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data: LoginResponse = await response.json();
-        
-        // 토큰 저장
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        // 성공 메시지와 함께 메인 페이지로 이동
-        alert('로그인되었습니다!');
-        router.push('/sns');
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || '로그인에 실패했습니다.');
-      }
+      const data = await authAPI.login(formData);
+      
+      // 토큰 및 사용자 정보 저장
+      tokenManager.setToken(data.accessToken);
+      tokenManager.setUser(data.user);
+      
+      // 성공 메시지와 함께 메인 페이지로 이동
+      alert('로그인되었습니다!');
+      router.push('/sns');
     } catch (error) {
       console.error('로그인 오류:', error);
-      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      alert(error instanceof Error ? error.message : '로그인에 실패했습니다.');
     } finally {
       setIsLoading(false);
     }

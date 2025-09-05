@@ -5,8 +5,11 @@ import Image from 'next/image';
 import { User, Settings, MapPin, BarChart3, Shield, FileText, Info, Trash2, LogOut } from 'lucide-react';
 import { UserProfile } from '@/types';
 import { getUserProfile, updateUserProfile } from '@/lib/storage';
+import { authAPI, tokenManager } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 
 export default function MyPage() {
+  const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [locationPermission, setLocationPermission] = useState<boolean>(false);
   const [cacheSize, setCacheSize] = useState<string>('0MB');
@@ -90,6 +93,21 @@ export default function MyPage() {
       const updatedProfile = { ...profile, ...updates };
       setProfile(updatedProfile);
       updateUserProfile(updates);
+    }
+  };
+
+  const handleLogout = async () => {
+    if (confirm('로그아웃하시겠습니까?')) {
+      try {
+        await authAPI.logout();
+      } catch (error) {
+        console.error('로그아웃 API 오류:', error);
+      } finally {
+        // 토큰 및 사용자 정보 삭제
+        tokenManager.removeToken();
+        alert('로그아웃되었습니다.');
+        router.push('/login');
+      }
     }
   };
 
@@ -263,7 +281,10 @@ export default function MyPage() {
         </div>
 
         {/* 로그아웃 버튼 */}
-        <button className="w-full flex items-center justify-center space-x-2 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center space-x-2 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+        >
           <LogOut size={20} />
           <span className="font-medium">로그아웃</span>
         </button>

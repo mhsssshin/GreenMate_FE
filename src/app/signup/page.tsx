@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Eye, EyeOff, Check, X, ArrowLeft } from 'lucide-react';
-import { SignupRequest, SignupResponse } from '@/types';
+import { SignupRequest } from '@/types';
+import { authAPI, tokenManager } from '@/lib/api';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -88,31 +89,18 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data: SignupResponse = await response.json();
-        
-        // 토큰 저장
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        
-        // 성공 메시지와 함께 메인 페이지로 이동
-        alert('회원가입이 완료되었습니다!');
-        router.push('/sns');
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || '회원가입에 실패했습니다.');
-      }
+      const data = await authAPI.signup(formData);
+      
+      // 토큰 및 사용자 정보 저장
+      tokenManager.setToken(data.accessToken);
+      tokenManager.setUser(data.user);
+      
+      // 성공 메시지와 함께 메인 페이지로 이동
+      alert('회원가입이 완료되었습니다!');
+      router.push('/sns');
     } catch (error) {
       console.error('회원가입 오류:', error);
-      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      alert(error instanceof Error ? error.message : '회원가입에 실패했습니다.');
     } finally {
       setIsLoading(false);
     }

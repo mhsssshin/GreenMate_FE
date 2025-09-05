@@ -297,8 +297,8 @@ export default function WalkPage() {
     } catch (error) {
       console.error('위치 검색 중 오류가 발생했습니다:', error);
       console.error('에러 상세:', {
-        message: error.message,
-        stack: error.stack,
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
         searchInput: searchInput
       });
       
