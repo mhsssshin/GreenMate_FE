@@ -31,6 +31,7 @@ export default function WalkPage() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [displayLocation, setDisplayLocation] = useState<string>('');
+  const [isSearchMode, setIsSearchMode] = useState(false); // 검색 모드 여부
   const [currentSteps, setCurrentSteps] = useState<number>(0);
   const [dailyGoalSteps] = useState<number>(10000); // 하루 추천 걸음 수
   
@@ -57,7 +58,12 @@ export default function WalkPage() {
       };
       setCurrentLocation(gpsLocation);
       setSearchLocation(`현재위치(${lat}/${lng})`);
-      setDisplayLocation(`위도: ${lat}, 경도: ${lng}`);
+      
+      // 검색 모드가 아닐 때만 현재 위치 표시
+      if (!isSearchMode) {
+        setDisplayLocation(`위도: ${lat}, 경도: ${lng}`);
+      }
+      
       // GPS 좌표 기반 코스 자동 로드
       loadNearbyCourses(gpsLocation);
     } else {
@@ -67,7 +73,12 @@ export default function WalkPage() {
           const location = await getCurrentLocation();
           setCurrentLocation(location);
           setSearchLocation(`현재위치(${location.lat.toFixed(4)}/${location.lng.toFixed(4)})`);
-          setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)}`);
+          
+          // 검색 모드가 아닐 때만 현재 위치 표시
+          if (!isSearchMode) {
+            setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)}`);
+          }
+          
           // 현재 위치 기반 코스 자동 로드
           loadNearbyCourses(location);
         } catch (error) {
@@ -166,6 +177,7 @@ export default function WalkPage() {
     if (!searchLocation.trim()) return;
     
     setIsSearching(true);
+    setIsSearchMode(true); // 검색 모드 활성화
     
     try {
       // 새로운 geocode API 호출 (POST 방식)
@@ -211,6 +223,7 @@ export default function WalkPage() {
             lat: firstResult.latitude,
             lng: firstResult.longitude
           });
+          // 검색 모드에서는 API에서 받은 좌표 표시
           setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude}`);
         }
       }
@@ -238,6 +251,7 @@ export default function WalkPage() {
       ];
       
       setTrackingCourses(fallbackResults);
+      // 검색 실패 시에도 검색 모드 유지
     } finally {
       setIsSearching(false);
     }
@@ -334,6 +348,20 @@ export default function WalkPage() {
     return () => clearInterval(interval);
   }, [isTracking, selectedCourse]);
 
+  // 검색어 초기화 및 검색 모드 해제
+  const resetSearch = () => {
+    setSearchLocation('');
+    setIsSearchMode(false);
+    setTrackingCourses([]);
+    setSelectedCourse(null);
+    
+    // 현재 위치로 되돌리기
+    if (currentLocation) {
+      setDisplayLocation(`위도: ${currentLocation.lat}, 경도: ${currentLocation.lng}`);
+      loadNearbyCourses(currentLocation);
+    }
+  };
+
   const startNavigation = () => {
     if (selectedCourse) {
       startTracking();
@@ -401,7 +429,7 @@ export default function WalkPage() {
                 />
                 
                 {/* 검색 버튼 */}
-                <div className="flex justify-center">
+                <div className="flex justify-center space-x-3">
                   <button
                     onClick={searchCourses}
                     disabled={isSearching || !searchLocation.trim()}
@@ -410,6 +438,14 @@ export default function WalkPage() {
                     <Search size={16} />
                     <span>{isSearching ? '검색 중...' : '검색'}</span>
                   </button>
+                  {isSearchMode && (
+                    <button
+                      onClick={resetSearch}
+                      className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200"
+                    >
+                      초기화
+                    </button>
+                  )}
                 </div>
                 
                 {/* 현재 위치 정보 표시 */}
