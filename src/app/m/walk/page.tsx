@@ -170,12 +170,19 @@ export default function WalkPage() {
         type: item.type || ['park', 'city', 'river'][Math.floor(Math.random() * 3)]
       }));
 
-      setTrackingCourses(searchResults);
-      
-      // 검색 후 현재 위치 표시 업데이트
-      if (currentLocation) {
-        setDisplayLocation(`위도: ${currentLocation.lat.toFixed(4)}, 경도: ${currentLocation.lng.toFixed(4)}`);
+      // 검색된 위치의 위도/경도 정보 업데이트
+      if (data.length > 0) {
+        const firstResult = data[0];
+        if (firstResult.latitude && firstResult.longitude) {
+          setCurrentLocation({
+            lat: firstResult.latitude,
+            lng: firstResult.longitude
+          });
+          setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude}`);
+        }
       }
+
+      setTrackingCourses(searchResults);
       
     } catch (error) {
       console.error('위치 검색 중 오류가 발생했습니다:', error);
