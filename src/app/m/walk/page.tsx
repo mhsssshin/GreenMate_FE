@@ -136,47 +136,70 @@ export default function WalkPage() {
   };
 
   // 위치 검색
-  const searchCourses = () => {
+  const searchCourses = async () => {
     if (!searchLocation.trim()) return;
     
     setIsSearching(true);
     
-    // 검색된 지역의 코스 로드 (더미 데이터)
-    const searchResults: TrackingCourse[] = [
-      {
-        id: '5',
-        name: '강남역 주변 걷기',
-        location: '강남역',
-        distance: 2.8,
-        duration: 35,
-        difficulty: 'medium',
-        steps: 3500,
-        description: '강남의 번화가를 둘러보는 코스',
-        rating: 4.1,
-        type: 'city'
-      },
-      {
-        id: '6',
-        name: '인사동 문화거리',
-        location: '인사동',
-        distance: 1.9,
-        duration: 25,
-        difficulty: 'easy',
-        steps: 2400,
-        description: '전통과 현대가 어우러진 문화 코스',
-        rating: 4.4,
-        type: 'city'
-      }
-    ];
+    try {
+      // 백엔드 API 호출 (Next.js 프록시 사용)
+      const response = await fetch(`/api/locations/search?query=${encodeURIComponent(searchLocation.trim())}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    setTimeout(() => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // API 응답 데이터를 TrackingCourse 형태로 변환
+      const searchResults: TrackingCourse[] = data.map((item: any, index: number) => ({
+        id: `search-${index}`,
+        name: item.name || `${searchLocation} 주변 걷기`,
+        location: item.address || searchLocation,
+        distance: item.distance || Math.random() * 5 + 1, // 1-6km
+        duration: Math.floor((item.distance || Math.random() * 5 + 1) * 12), // km * 12분
+        difficulty: item.difficulty || ['easy', 'medium', 'hard'][Math.floor(Math.random() * 3)],
+        steps: Math.floor((item.distance || Math.random() * 5 + 1) * 1200), // km * 1200보
+        description: item.description || `${searchLocation} 지역의 트래킹 코스`,
+        rating: item.rating || (Math.random() * 2 + 3).toFixed(1), // 3.0-5.0
+        type: item.type || ['park', 'city', 'river'][Math.floor(Math.random() * 3)]
+      }));
+
       setTrackingCourses(searchResults);
-      setIsSearching(false);
+      
       // 검색 후 현재 위치 표시 업데이트
       if (currentLocation) {
         setDisplayLocation(`위도: ${currentLocation.lat.toFixed(4)}, 경도: ${currentLocation.lng.toFixed(4)}`);
       }
-    }, 1000);
+      
+    } catch (error) {
+      console.error('위치 검색 중 오류가 발생했습니다:', error);
+      
+      // API 호출 실패 시 더미 데이터로 fallback
+      const fallbackResults: TrackingCourse[] = [
+        {
+          id: 'fallback-1',
+          name: `${searchLocation} 주변 걷기`,
+          location: searchLocation,
+          distance: 2.8,
+          duration: 35,
+          difficulty: 'medium',
+          steps: 3500,
+          description: `${searchLocation} 지역의 트래킹 코스`,
+          rating: 4.1,
+          type: 'city'
+        }
+      ];
+      
+      setTrackingCourses(fallbackResults);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
