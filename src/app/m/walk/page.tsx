@@ -285,7 +285,7 @@ export default function WalkPage() {
             lat: firstResult.latitude,
             lng: firstResult.longitude
           });
-          // 검색된 위치로 현재 위치 표시 업데이트
+          // 검색된 위치로 현재 위치 표시 업데이트 (검색어 기반)
           setSearchLocation(`현재위치(${firstResult.latitude.toFixed(4)}/${firstResult.longitude.toFixed(4)})`);
           // 검색 모드에서는 API에서 받은 좌표 표시
           setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude} (검색)`);
@@ -296,21 +296,26 @@ export default function WalkPage() {
       
     } catch (error) {
       console.error('위치 검색 중 오류가 발생했습니다:', error);
+      console.error('에러 상세:', {
+        message: error.message,
+        stack: error.stack,
+        searchInput: searchInput
+      });
       
       // API 호출 실패 시 더미 데이터로 fallback
       const fallbackResults: TrackingCourse[] = [
         {
           id: 'fallback-1',
-          name: `${searchLocation} 주변 걷기`,
-          location: searchLocation,
+          name: `${searchInput} 걷기 코스`,
+          location: searchInput,
           distance: 2.8,
           duration: 35,
           difficulty: 'medium',
           steps: 3500,
-          description: `${searchLocation} 지역의 트래킹 코스`,
+          description: `${searchInput} 지역의 트래킹 코스`,
           rating: 4.1,
           type: 'city',
-          imageUrl: getDefaultImageForLocation(searchLocation)
+          imageUrl: getDefaultImageForLocation(searchInput)
         }
       ];
       

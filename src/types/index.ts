@@ -101,3 +101,52 @@ export interface AppEvent {
   type: AppEventType;
   data?: any;
 }
+
+// 회원가입 관련 타입
+export interface SignupRequest {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  nickname: string;
+  gender: 'MALE' | 'FEMALE';
+  age: number;
+  height: number;
+  weight: number;
+}
+
+export interface SignupResponse {
+  accessToken: string;
+  tokenType: string;
+  user: {
+    id: number;
+    email: string;
+    nickname: string;
+    gender: 'MALE' | 'FEMALE';
+    age: number;
+    height: number;
+    weight: number;
+    role: string;
+    createdAt: string;
+  };
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  accessToken: string;
+  tokenType: string;
+  user: {
+    id: number;
+    email: string;
+    nickname: string;
+    gender: 'MALE' | 'FEMALE';
+    age: number;
+    height: number;
+    weight: number;
+    role: string;
+    createdAt: string;
+  };
+}
