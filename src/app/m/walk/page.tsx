@@ -194,102 +194,111 @@ export default function WalkPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {!isNavigating ? (
-        <div className="p-4 space-y-6">
-          {/* 위치 검색 */}
-          <div className="card">
-            <div className="flex items-center space-x-3 mb-3">
-              <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                <Search size={16} className="text-primary-600" />
-              </div>
-              <span className="font-medium text-gray-900">트래킹 코스 검색</span>
-            </div>
-            
-            <div className="space-y-3">
-              <input
-                type="text"
-                placeholder={currentLocation ? `현재 위치: ${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : "위치를 검색하세요"}
-                value={searchLocation}
-                onChange={(e) => setSearchLocation(e.target.value)}
-                className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              />
-              
-              {/* 자동차 시동버튼 스타일의 검색 버튼 */}
-              <div className="flex justify-center py-8">
-                <button
-                  onClick={searchCourses}
-                  disabled={isSearching}
-                  className="w-24 h-24 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 transform hover:scale-110 disabled:scale-100"
-                >
-                  <Search size={32} className="text-white" />
-                </button>
+        <div className="flex flex-col h-screen">
+          {/* 위치 검색 섹션 - 상단 고정 */}
+          <div className="flex-shrink-0 p-4 bg-white border-b border-gray-200">
+            <div className="card">
+              <div className="flex items-center space-x-3 mb-3">
+                <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                  <Search size={16} className="text-primary-600" />
+                </div>
+                <span className="font-medium text-gray-900">트래킹 코스 검색</span>
               </div>
               
-              <p className="text-center text-sm text-gray-500">
-                {isSearching ? '검색 중...' : '검색 버튼을 눌러 트래킹 코스를 찾아보세요'}
-              </p>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  placeholder={currentLocation ? `현재 위치: ${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : "위치를 검색하세요"}
+                  value={searchLocation}
+                  onChange={(e) => setSearchLocation(e.target.value)}
+                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                />
+                
+                {/* 자동차 시동버튼 스타일의 검색 버튼 */}
+                <div className="flex justify-center py-4">
+                  <button
+                    onClick={searchCourses}
+                    disabled={isSearching}
+                    className="w-24 h-24 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 transform hover:scale-110 disabled:scale-100"
+                  >
+                    <Search size={32} className="text-white" />
+                  </button>
+                </div>
+                
+                <p className="text-center text-sm text-gray-500">
+                  {isSearching ? '검색 중...' : '검색 버튼을 눌러 트래킹 코스를 찾아보세요'}
+                </p>
+              </div>
             </div>
           </div>
 
-          {/* 트래킹 코스 목록 */}
+          {/* 트래킹 코스 목록 - 화면 전체 활용 */}
           {trackingCourses.length > 0 && (
-            <div className="space-y-3">
-              <h2 className="text-lg font-semibold text-gray-900">
-                {searchLocation ? '검색 결과' : '근처 트래킹 코스'}
-              </h2>
-              {trackingCourses.map((course) => (
-                <div
-                  key={course.id}
-                  className={`card cursor-pointer transition-all ${
-                    selectedCourse?.id === course.id
-                      ? 'ring-2 ring-primary-500 bg-primary-50'
-                      : 'hover:bg-gray-50'
-                  }`}
-                  onClick={() => setSelectedCourse(course)}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        {getTypeIcon(course.type)}
-                        <h3 className="font-medium text-gray-900">{course.name}</h3>
-                        {selectedCourse?.id === course.id && (
-                          <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                        )}
-                      </div>
-                      
-                      <p className="text-sm text-gray-600 mb-2">{course.description}</p>
-                      <p className="text-sm text-gray-500 mb-3">{course.location}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
-                          <div className="flex items-center space-x-1">
-                            <Navigation size={14} />
-                            <span>{course.distance}km</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Clock size={14} />
-                            <span>{course.duration}분</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Footprints size={14} />
-                            <span>{course.steps}보</span>
-                          </div>
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="space-y-3">
+                <h2 className="text-lg font-semibold text-gray-900 sticky top-0 bg-gray-50 py-2">
+                  {searchLocation ? '검색 결과' : '근처 트래킹 코스'}
+                </h2>
+                {trackingCourses.map((course) => (
+                  <div
+                    key={course.id}
+                    className={`card cursor-pointer transition-all ${
+                      selectedCourse?.id === course.id
+                        ? 'ring-2 ring-primary-500 bg-primary-50'
+                        : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => setSelectedCourse(course)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          {getTypeIcon(course.type)}
+                          <h3 className="font-medium text-gray-900">{course.name}</h3>
+                          {selectedCourse?.id === course.id && (
+                            <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
+                          )}
                         </div>
                         
-                        <div className="flex items-center space-x-2">
-                          <div className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}>
-                            {getDifficultyLabel(course.difficulty)}
+                        <p className="text-sm text-gray-600 mb-2">{course.description}</p>
+                        <p className="text-sm text-gray-500 mb-3">{course.location}</p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                            <div className="flex items-center space-x-1">
+                              <Navigation size={14} />
+                              <span>{course.distance}km</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Clock size={14} />
+                              <span>{course.duration}분</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Footprints size={14} />
+                              <span>{course.steps}보</span>
+                            </div>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            <Star size={14} className="text-yellow-500 fill-current" />
-                            <span className="text-sm text-gray-600">{course.rating}</span>
+                          
+                          <div className="flex items-center space-x-2">
+                            <div className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(course.difficulty)}`}>
+                              {getDifficultyLabel(course.difficulty)}
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              <Star size={14} className="text-yellow-500 fill-current" />
+                              <span className="text-sm text-gray-600">{course.rating}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+          )}
 
+          {/* 시작 버튼 - 하단 고정 */}
+          {trackingCourses.length > 0 && (
+            <div className="flex-shrink-0 p-4 bg-white border-t border-gray-200">
               <button
                 onClick={startNavigation}
                 disabled={!selectedCourse}
