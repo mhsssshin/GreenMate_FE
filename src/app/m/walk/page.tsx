@@ -72,6 +72,8 @@ export default function WalkPage() {
   // 현재 걸음 수 가져오기
   useEffect(() => {
     const steps = getCurrentSteps();
+    console.log('현재 걸음 수:', steps);
+    console.log('전체 쿠키:', document.cookie);
     setCurrentSteps(steps);
   }, []);
 

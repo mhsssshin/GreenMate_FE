@@ -228,10 +228,13 @@ export function getCookie(name: string): string | null {
  * 현재 걸음 수를 쿠키에서 가져오는 함수
  */
 export function getCurrentSteps(): number {
-  const stepsCookie = getCookie('greenmate_steps');
-  if (stepsCookie) {
-    const steps = parseInt(stepsCookie, 10);
-    return isNaN(steps) ? 0 : steps;
+  // 쿠키에서 직접 걸음 수 추출
+  const cookie = document.cookie;
+  const match = cookie.match(/greenmate_steps=([^;]+)/);
+  if (match) {
+    const value = match[1];
+    const stepsMatch = value.match(/steps=(\d+)/);
+    return stepsMatch ? parseInt(stepsMatch[1], 10) : 0;
   }
   return 0;
 }
