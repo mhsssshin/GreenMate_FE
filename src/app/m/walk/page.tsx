@@ -142,8 +142,8 @@ export default function WalkPage() {
     setIsSearching(true);
     
     try {
-      // 백엔드 API 호출 (Next.js 프록시 사용)
-      const response = await fetch(`/api/locations/search?query=${encodeURIComponent(searchLocation.trim())}`, {
+      // 백엔드 API 직접 호출 (포트 8080)
+      const response = await fetch(`http://103.244.108.70:8080/api/locations/search?query=${encodeURIComponent(searchLocation.trim())}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
