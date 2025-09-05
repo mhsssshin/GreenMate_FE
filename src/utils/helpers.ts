@@ -243,26 +243,45 @@ export function getCurrentSteps(): number {
  * 쿠키에서 위치 정보를 가져오는 함수
  */
 export function getLocationFromCookie(): { lat: number; lng: number } | null {
-  if (typeof document === 'undefined') return null;
+  if (typeof document === 'undefined') {
+    console.log('getLocationFromCookie: 서버사이드 환경');
+    return null;
+  }
 
   const cookie = document.cookie;
+  console.log('getLocationFromCookie: 전체 쿠키:', cookie);
+  
   const match = cookie.match(/greenmate_steps=([^;]+)/);
+  console.log('getLocationFromCookie: greenmate_steps 매치:', match);
   
   if (match) {
     const value = match[1];
+    console.log('getLocationFromCookie: 쿠키 값:', value);
     
     // lat과 lng 추출
     const latMatch = value.match(/lat=([^&]+)/);
     const lngMatch = value.match(/lng=([^&]+)/);
     
+    console.log('getLocationFromCookie: lat 매치:', latMatch);
+    console.log('getLocationFromCookie: lng 매치:', lngMatch);
+    
     if (latMatch && lngMatch) {
       const lat = parseFloat(latMatch[1]);
       const lng = parseFloat(lngMatch[1]);
       
+      console.log('getLocationFromCookie: 파싱된 좌표:', { lat, lng });
+      
       if (!isNaN(lat) && !isNaN(lng)) {
+        console.log('getLocationFromCookie: 유효한 좌표 반환');
         return { lat, lng };
+      } else {
+        console.log('getLocationFromCookie: 좌표가 NaN');
       }
+    } else {
+      console.log('getLocationFromCookie: lat 또는 lng를 찾을 수 없음');
     }
+  } else {
+    console.log('getLocationFromCookie: greenmate_steps 쿠키를 찾을 수 없음');
   }
   
   return null;

@@ -59,11 +59,15 @@ export default function WalkPage() {
       let locationSource = '';
       
       // 1. 쿠키에서 위치 정보 가져오기 (최우선)
+      console.log('전체 쿠키:', document.cookie);
       const cookieLocation = getLocationFromCookie();
+      console.log('쿠키에서 파싱된 위치:', cookieLocation);
       if (cookieLocation) {
         location = cookieLocation;
         locationSource = '쿠키';
         console.log('쿠키에서 위치 정보 가져옴:', cookieLocation);
+      } else {
+        console.log('쿠키에서 위치 정보를 찾을 수 없음');
       }
       
       // 2. GET Parameter에서 GPS 좌표 가져오기
