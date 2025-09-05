@@ -499,8 +499,8 @@ export default function SNSPage() {
                           <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                             <path
                               d={post.routeShare.polyline.map((point, index) => {
-                                if (index === 0) return `M ${50 + (point[1] - post.routeShare.origin.lng) * 10000} ${50 + (point[0] - post.routeShare.origin.lat) * 10000}`;
-                                return `L ${50 + (point[1] - post.routeShare.origin.lng) * 10000} ${50 + (point[0] - post.routeShare.origin.lat) * 10000}`;
+                                if (index === 0) return `M ${50 + (point[1] - post.routeShare!.origin.lng) * 10000} ${50 + (point[0] - post.routeShare!.origin.lat) * 10000}`;
+                                return `L ${50 + (point[1] - post.routeShare!.origin.lng) * 10000} ${50 + (point[0] - post.routeShare!.origin.lat) * 10000}`;
                               }).join(' ')}
                               stroke="#3B82F6"
                               strokeWidth="1"
