@@ -25,6 +25,7 @@ export default function WalkPage() {
   const searchParams = useSearchParams();
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [searchLocation, setSearchLocation] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>(''); // 실제 검색 입력값
   const [isSearching, setIsSearching] = useState(false);
   const [trackingCourses, setTrackingCourses] = useState<TrackingCourse[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<TrackingCourse | null>(null);
@@ -193,12 +194,14 @@ export default function WalkPage() {
   // 다른 곳에서 시작하기 버튼 클릭
   const enableSearchField = () => {
     setIsSearchFieldEnabled(true);
-    setSearchLocation(''); // 검색 필드 비우기
+    setSearchInput(''); // 검색 입력 필드 비우기
   };
 
   // 위치 검색
   const searchCourses = async () => {
-    if (!searchLocation.trim()) return;
+    if (!searchInput.trim()) return;
+    
+    console.log('검색 키워드:', searchInput); // 디버깅용 로그
     
     setIsSearching(true);
     setIsSearchMode(true); // 검색 모드 활성화
@@ -212,7 +215,7 @@ export default function WalkPage() {
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: JSON.stringify({
-          keyword: searchLocation,
+          keyword: searchInput,
           locationType: "",
           region: ""
         })
@@ -240,16 +243,16 @@ export default function WalkPage() {
       // API 응답 데이터를 TrackingCourse 형태로 변환
       const searchResults: TrackingCourse[] = data.map((item: any, index: number) => ({
         id: `search-${index}`,
-        name: item.name || `${searchLocation} 주변 걷기`,
-        location: item.address || searchLocation,
+        name: item.name || `${searchInput} 주변 걷기`,
+        location: item.address || searchInput,
         distance: item.distance || Math.random() * 5 + 1, // 1-6km
         duration: Math.floor((item.distance || Math.random() * 5 + 1) * 12), // km * 12분
         difficulty: item.difficulty || ['easy', 'medium', 'hard'][Math.floor(Math.random() * 3)],
         steps: Math.floor((item.distance || Math.random() * 5 + 1) * 1200), // km * 1200보
-        description: item.description || `${searchLocation} 지역의 트래킹 코스`,
+        description: item.description || `${searchInput} 지역의 트래킹 코스`,
         rating: item.rating || (Math.random() * 2 + 3).toFixed(1), // 3.0-5.0
         type: item.type || ['park', 'city', 'river'][Math.floor(Math.random() * 3)],
-        imageUrl: getDefaultImageForLocation(item.name || searchLocation)
+        imageUrl: getDefaultImageForLocation(item.name || searchInput)
       }));
 
       // 검색된 위치의 위도/경도 정보 업데이트
@@ -389,7 +392,7 @@ export default function WalkPage() {
 
   // 검색어 초기화 및 검색 모드 해제
   const resetSearch = () => {
-    setSearchLocation('');
+    setSearchInput('');
     setIsSearchMode(false);
     setIsSearchFieldEnabled(false); // 검색 필드 비활성화
     setTrackingCourses([]);
@@ -486,8 +489,8 @@ export default function WalkPage() {
                     <input
                       type="text"
                       placeholder="위치를 검색하세요 (예: 강남역, 여의도)"
-                      value={searchLocation}
-                      onChange={(e) => setSearchLocation(e.target.value)}
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                     />
                     
