@@ -209,7 +209,7 @@ export default function WalkPage() {
         method: 'POST',
         headers: {
           'accept': '*/*',
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',
         },
         body: JSON.stringify({
           keyword: searchLocation,
@@ -222,7 +222,20 @@ export default function WalkPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const responseData = await response.json();
+      
+      // API 응답 구조 확인 및 데이터 추출
+      let data = [];
+      if (responseData.status === 'success' && responseData.data) {
+        // 단일 결과인 경우 배열로 변환
+        data = [responseData.data];
+      } else if (Array.isArray(responseData)) {
+        // 배열인 경우 그대로 사용
+        data = responseData;
+      } else {
+        // 기타 경우 빈 배열
+        data = [];
+      }
       
       // API 응답 데이터를 TrackingCourse 형태로 변환
       const searchResults: TrackingCourse[] = data.map((item: any, index: number) => ({
