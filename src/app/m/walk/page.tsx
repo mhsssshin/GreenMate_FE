@@ -268,7 +268,7 @@ export default function WalkPage() {
                   placeholder="위치를 검색하세요 (예: 강남역, 여의도)"
                   value={searchLocation}
                   onChange={(e) => setSearchLocation(e.target.value)}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 placeholder-gray-500"
                 />
                 
                 {/* 검색 버튼 */}
