@@ -208,8 +208,8 @@ export default function WalkPage() {
         const firstResult = data[0];
         if (firstResult.latitude && firstResult.longitude) {
           setCurrentLocation({
-            latitude: firstResult.latitude,
-            longitude: firstResult.longitude
+            lat: firstResult.latitude,
+            lng: firstResult.longitude
           });
           setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude}`);
         }
