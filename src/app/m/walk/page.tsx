@@ -32,6 +32,7 @@ export default function WalkPage() {
   const [progress, setProgress] = useState(0);
   const [displayLocation, setDisplayLocation] = useState<string>('');
   const [isSearchMode, setIsSearchMode] = useState(false); // 검색 모드 여부
+  const [isSearchFieldEnabled, setIsSearchFieldEnabled] = useState(false); // 검색 필드 활성화 여부
   const [currentSteps, setCurrentSteps] = useState<number>(0);
   const [dailyGoalSteps] = useState<number>(10000); // 하루 추천 걸음 수
   
@@ -94,7 +95,7 @@ export default function WalkPage() {
         setCurrentLocation(location);
         setSearchLocation(`현재위치(${location.lat.toFixed(4)}/${location.lng.toFixed(4)})`);
         
-        // 검색 모드가 아닐 때만 현재 위치 표시
+        // 검색 모드가 아닐 때만 현재 위치 표시 (쿠키값 사용)
         if (!isSearchMode) {
           setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)} (${locationSource})`);
         }
@@ -186,6 +187,12 @@ export default function WalkPage() {
     ];
 
     setTrackingCourses(mockCourses);
+  };
+
+  // 다른 곳에서 시작하기 버튼 클릭
+  const enableSearchField = () => {
+    setIsSearchFieldEnabled(true);
+    setSearchLocation(''); // 검색 필드 비우기
   };
 
   // 위치 검색
@@ -368,6 +375,7 @@ export default function WalkPage() {
   const resetSearch = () => {
     setSearchLocation('');
     setIsSearchMode(false);
+    setIsSearchFieldEnabled(false); // 검색 필드 비활성화
     setTrackingCourses([]);
     setSelectedCourse(null);
     
@@ -443,33 +451,51 @@ export default function WalkPage() {
               </div>
               
               <div className="space-y-3">
-                <input
-                  type="text"
-                  placeholder="위치를 검색하세요 (예: 강남역, 여의도)"
-                  value={searchLocation}
-                  onChange={(e) => setSearchLocation(e.target.value)}
-                  className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-                />
-                
-                {/* 검색 버튼 */}
-                <div className="flex justify-center space-x-3">
-                  <button
-                    onClick={searchCourses}
-                    disabled={isSearching || !searchLocation.trim()}
-                    className="px-6 py-2 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2"
-                  >
-                    <Search size={16} />
-                    <span>{isSearching ? '검색 중...' : '검색'}</span>
-                  </button>
-                  {isSearchMode && (
+                {/* 다른 곳에서 시작하기 버튼 */}
+                {!isSearchFieldEnabled && (
+                  <div className="flex justify-center">
                     <button
-                      onClick={resetSearch}
-                      className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200"
+                      onClick={enableSearchField}
+                      className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2"
                     >
-                      초기화
+                      <MapPin size={16} />
+                      <span>다른 곳에서 시작하기</span>
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
+
+                {/* 검색 필드 (활성화된 경우에만 표시) */}
+                {isSearchFieldEnabled && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="위치를 검색하세요 (예: 강남역, 여의도)"
+                      value={searchLocation}
+                      onChange={(e) => setSearchLocation(e.target.value)}
+                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-gray-900 placeholder-gray-500"
+                    />
+                    
+                    {/* 검색 버튼 */}
+                    <div className="flex justify-center space-x-3">
+                      <button
+                        onClick={searchCourses}
+                        disabled={isSearching || !searchLocation.trim()}
+                        className="px-6 py-2 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2"
+                      >
+                        <Search size={16} />
+                        <span>{isSearching ? '검색 중...' : '검색'}</span>
+                      </button>
+                      {isSearchMode && (
+                        <button
+                          onClick={resetSearch}
+                          className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200"
+                        >
+                          초기화
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
                 
                 {/* 현재 위치 정보 표시 */}
                 {displayLocation && (
