@@ -525,7 +525,7 @@ export default function WalkPage() {
                     <div className="flex justify-center space-x-3">
                       <button
                         onClick={searchCourses}
-                        disabled={isSearching || !searchLocation.trim()}
+                        disabled={isSearching || !searchInput.trim()}
                         className="px-6 py-2 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2"
                       >
                         <Search size={16} />
