@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { MapPin, Clock, Footprints, Navigation, Search, Star, Mountain, TreePine } from 'lucide-react';
 import { Location } from '@/types';
 import { getCurrentLocation, watchLocation } from '@/lib/bridge';
@@ -19,6 +20,7 @@ interface TrackingCourse {
 }
 
 export default function WalkPage() {
+  const searchParams = useSearchParams();
   const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
   const [searchLocation, setSearchLocation] = useState<string>('');
   const [isSearching, setIsSearching] = useState(false);
@@ -27,21 +29,38 @@ export default function WalkPage() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // 현재 위치 가져오기
+  // GET Parameter에서 GPS 좌표 가져오기
   useEffect(() => {
-    const initLocation = async () => {
-      try {
-        const location = await getCurrentLocation();
-        setCurrentLocation(location);
-        // 현재 위치 기반 코스 자동 로드
-        loadNearbyCourses(location);
-      } catch (error) {
-        console.error('위치 정보를 가져올 수 없습니다:', error);
-      }
-    };
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    
+    if (lat && lng) {
+      // GET Parameter로 받은 GPS 좌표 사용
+      const gpsLocation: Location = {
+        lat: parseFloat(lat),
+        lng: parseFloat(lng)
+      };
+      setCurrentLocation(gpsLocation);
+      setSearchLocation(`현재위치(${lat}/${lng})`);
+      // GPS 좌표 기반 코스 자동 로드
+      loadNearbyCourses(gpsLocation);
+    } else {
+      // GET Parameter가 없으면 기본 위치 가져오기
+      const initLocation = async () => {
+        try {
+          const location = await getCurrentLocation();
+          setCurrentLocation(location);
+          setSearchLocation(`현재위치(${location.lat.toFixed(4)}/${location.lng.toFixed(4)})`);
+          // 현재 위치 기반 코스 자동 로드
+          loadNearbyCourses(location);
+        } catch (error) {
+          console.error('위치 정보를 가져올 수 없습니다:', error);
+        }
+      };
 
-    initLocation();
-  }, []);
+      initLocation();
+    }
+  }, [searchParams]);
 
   // 위치 추적
   useEffect(() => {
@@ -208,7 +227,7 @@ export default function WalkPage() {
               <div className="space-y-3">
                 <input
                   type="text"
-                  placeholder={currentLocation ? `현재 위치: ${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}` : "위치를 검색하세요"}
+                  placeholder="위치를 검색하세요"
                   value={searchLocation}
                   onChange={(e) => setSearchLocation(e.target.value)}
                   className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
