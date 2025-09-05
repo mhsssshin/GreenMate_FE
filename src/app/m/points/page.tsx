@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Coins, TrendingUp, Calendar, Gift, Award } from 'lucide-react';
 import { PointTransaction } from '@/types';
+import { getPointsData } from '@/utils/points';
 
 // 더미 데이터
 const mockTransactions: PointTransaction[] = [
@@ -39,10 +40,32 @@ const mockTransactions: PointTransaction[] = [
 ];
 
 export default function PointsPage() {
-  const [balance, setBalance] = useState(220);
-  const [weeklyEarned, setWeeklyEarned] = useState(120);
-  const [monthlyEarned, setMonthlyEarned] = useState(450);
-  const [transactions, setTransactions] = useState<PointTransaction[]>(mockTransactions);
+  const [balance, setBalance] = useState(0);
+  const [weeklyEarned, setWeeklyEarned] = useState(0);
+  const [monthlyEarned, setMonthlyEarned] = useState(0);
+  const [transactions, setTransactions] = useState<PointTransaction[]>([]);
+
+  // 컴포넌트 마운트 시 포인트 데이터 로드
+  useEffect(() => {
+    const loadPointsData = () => {
+      try {
+        const pointsData = getPointsData();
+        setBalance(pointsData.balance);
+        setWeeklyEarned(pointsData.weeklyEarned);
+        setMonthlyEarned(pointsData.monthlyEarned);
+        setTransactions(pointsData.transactions);
+      } catch (error) {
+        console.error('포인트 데이터 로드 실패:', error);
+        // 실패 시 더미 데이터 사용
+        setBalance(220);
+        setWeeklyEarned(120);
+        setMonthlyEarned(450);
+        setTransactions(mockTransactions);
+      }
+    };
+
+    loadPointsData();
+  }, []);
 
   const getTransactionIcon = (type: PointTransaction['type']) => {
     switch (type) {

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '@/styles/globals.css';
 import Navbar from '@/components/Navbar';
+import ConditionalNavbar from '@/components/ConditionalNavbar';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -28,7 +29,7 @@ export default function MobileLayout({
       </head>
       <body className={inter.className}>
         <div className="min-h-screen bg-gray-50">
-          <Navbar />
+          <ConditionalNavbar />
           <main className="pt-16 pb-20">
             {children}
           </main>

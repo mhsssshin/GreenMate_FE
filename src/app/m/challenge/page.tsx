@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CheckCircle, Clock, Star, Trophy, Target, Zap } from 'lucide-react';
+import { addPoints, updatePoints } from '@/utils/points';
 
 interface Challenge {
   id: string;
@@ -131,6 +132,33 @@ export default function ChallengePage() {
     setChallenges(prev => prev.map(challenge => {
       if (challenge.id === challengeId) {
         const newStatus = challenge.status === 'completed' ? 'pending' : 'completed';
+        
+        // 챌린지 완료 시 포인트 추가
+        if (newStatus === 'completed') {
+          const transaction = addPoints('challenge', {
+            challengeId: challenge.id,
+            challengeTitle: challenge.title,
+          });
+          
+          const updatedPointsData = updatePoints(transaction);
+          console.log('챌린지 완료 포인트 추가:', transaction);
+          console.log('업데이트된 포인트 데이터:', updatedPointsData);
+          
+          // 사용자 통계 업데이트
+          setUserStats(prev => ({
+            ...prev,
+            completedChallenges: prev.completedChallenges + 1,
+            totalPoints: prev.totalPoints + transaction.amount,
+          }));
+        } else {
+          // 챌린지 취소 시 포인트 차감
+          setUserStats(prev => ({
+            ...prev,
+            completedChallenges: Math.max(0, prev.completedChallenges - 1),
+            totalPoints: Math.max(0, prev.totalPoints - challenge.points),
+          }));
+        }
+        
         return { ...challenge, status: newStatus };
       }
       return challenge;

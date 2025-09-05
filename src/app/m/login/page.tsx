@@ -18,22 +18,11 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<Partial<LoginRequest>>({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // 폼 유효성 검사
+  // 폼 유효성 검사 (검증 제거)
   const validateForm = (): boolean => {
-    const newErrors: Partial<LoginRequest> = {};
-
-    if (!formData.email) {
-      newErrors.email = '이메일을 입력해주세요.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = '올바른 이메일 형식을 입력해주세요.';
-    }
-
-    if (!formData.password) {
-      newErrors.password = '비밀번호를 입력해주세요.';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // 모든 검증을 제거하고 항상 true 반환
+    setErrors({});
+    return true;
   };
 
   // 폼 제출
@@ -54,16 +43,11 @@ export default function LoginPage() {
   // 입력 필드 변경
   const handleInputChange = (field: keyof LoginRequest, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
-    // 에러 메시지 초기화
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
-    }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="p-4 max-w-md mx-auto pt-16">
+      <div className="p-4 max-w-md mx-auto pt-8">
         {/* 로고 */}
         <div className="text-center mb-8">
           <Image
@@ -88,14 +72,9 @@ export default function LoginPage() {
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors text-gray-900 ${
-                errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
-              }`}
-              placeholder="example@email.com"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors text-gray-900 bg-white"
+              placeholder="아무거나 입력하세요"
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-            )}
           </div>
 
           {/* 비밀번호 */}
@@ -108,10 +87,8 @@ export default function LoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
-                className={`w-full px-4 py-3 pr-12 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors text-gray-900 ${
-                  errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300 bg-white'
-                }`}
-                placeholder="비밀번호를 입력하세요"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors text-gray-900 bg-white"
+                placeholder="아무거나 입력하세요"
               />
               <button
                 type="button"
@@ -121,9 +98,6 @@ export default function LoginPage() {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-            )}
           </div>
 
           {/* 로그인 버튼 */}

@@ -6,6 +6,7 @@ import { MapPin, Clock, Footprints, Navigation, Search, Star, Mountain, TreePine
 import { Location } from '@/types';
 import { getCurrentLocation, watchLocation } from '@/lib/bridge';
 import { getCurrentSteps, getDefaultImageForLocation, getLocationFromCookie } from '@/utils/helpers';
+import { addPoints, updatePoints } from '@/utils/points';
 
 interface TrackingCourse {
   id: string;
@@ -37,6 +38,7 @@ export default function WalkPage() {
   const [currentSteps, setCurrentSteps] = useState<number>(0);
   const [dailyGoalSteps] = useState<number>(Math.floor(Math.random() * (14000 - 9000 + 1)) + 9000); // 9000~14000 사이 랜덤 목표 걸음 수
   const [isSharingToFeed, setIsSharingToFeed] = useState(false); // 피드 공유 상태
+  const [earnedPoints, setEarnedPoints] = useState<number>(0); // 획득한 포인트
   
   // 트래킹 진행 상태
   const [isTracking, setIsTracking] = useState(false);
@@ -154,8 +156,28 @@ export default function WalkPage() {
     // 남은 걸음수에 따른 3가지 코스 생성 (최대 5000보 제한)
     const courses: TrackingCourse[] = [];
     
-    // 1. 많은 걸음 코스 (남은 걸음수의 120%, 최대 5000보)
-    const manySteps = Math.round(Math.min(Math.max(remainingSteps * 1.2, 1000), 5000));
+    let standardSteps: number;
+    let manySteps: number;
+    let fewSteps: number;
+    
+    // 남은 걸음수가 5000보 이상인 경우 랜덤 선택
+    if (remainingSteps >= 5000) {
+      // 표준 걸음을 3000~5000 사이에서 랜덤 선택
+      standardSteps = Math.round(Math.random() * (5000 - 3000 + 1)) + 3000;
+      
+      // 많은 걸음: 표준의 120% (최대 5000보)
+      manySteps = Math.round(Math.min(standardSteps * 1.2, 5000));
+      
+      // 적은 걸음: 표준의 80%
+      fewSteps = Math.round(standardSteps * 0.8);
+    } else {
+      // 기존 로직: 남은 걸음수가 5000보 미만인 경우
+      standardSteps = Math.round(Math.max(remainingSteps, 1000));
+      manySteps = Math.round(Math.min(remainingSteps * 1.2, 5000));
+      fewSteps = Math.round(Math.max(remainingSteps * 0.8, 500));
+    }
+    
+    // 1. 많은 걸음 코스
     const manyDistance = (manySteps * 0.7) / 1000; // 걸음수를 km로 변환 (평균 보폭 0.7m)
     
     courses.push({
@@ -172,8 +194,7 @@ export default function WalkPage() {
       imageUrl: getDefaultImageForLocation(locationName)
     });
     
-    // 2. 표준 걸음 코스 (남은 걸음수와 동일, 최대 5000보)
-    const standardSteps = Math.round(Math.min(Math.max(remainingSteps, 1000), 5000));
+    // 2. 표준 걸음 코스
     const standardDistance = (standardSteps * 0.7) / 1000;
     
     courses.push({
@@ -184,14 +205,13 @@ export default function WalkPage() {
       duration: Math.round(standardDistance * 12),
       difficulty: standardSteps >= 3000 ? 'medium' : 'easy',
       steps: standardSteps,
-      description: standardSteps >= 5000 ? `최대 걸음수인 5000보 코스입니다.` : `목표 걸음수에 딱 맞는 적당한 코스입니다.`,
+      description: remainingSteps >= 5000 ? `추천 걸음수인 ${standardSteps.toLocaleString()}보 코스입니다.` : `목표 걸음수에 딱 맞는 적당한 코스입니다.`,
       rating: 4.3,
       type: 'city',
       imageUrl: getDefaultImageForLocation(locationName)
     });
     
-    // 3. 적은 걸음 코스 (남은 걸음수의 80%, 최대 5000보)
-    const fewSteps = Math.round(Math.min(Math.max(remainingSteps * 0.8, 500), 5000));
+    // 3. 적은 걸음 코스
     const fewDistance = (fewSteps * 0.7) / 1000;
     
     courses.push({
@@ -202,7 +222,7 @@ export default function WalkPage() {
       duration: Math.round(fewDistance * 12),
       difficulty: 'easy',
       steps: fewSteps,
-      description: fewSteps >= 5000 ? `최대 걸음수인 5000보 코스입니다.` : `부담 없이 즐길 수 있는 가벼운 코스입니다.`,
+      description: `부담 없이 즐길 수 있는 가벼운 코스입니다.`,
       rating: 4.1,
       type: 'city',
       imageUrl: getDefaultImageForLocation(locationName)
@@ -390,6 +410,20 @@ export default function WalkPage() {
         
         if (isCompleted) {
           setIsTracking(false);
+          
+          // 트래킹 완료 시 포인트 추가
+          if (selectedCourse) {
+            const transaction = addPoints('walking', {
+              distance: selectedCourse.distance,
+              courseName: selectedCourse.name,
+              courseId: selectedCourse.id,
+            });
+            
+            const updatedPointsData = updatePoints(transaction);
+            setEarnedPoints(transaction.amount);
+            console.log('걷기 완료 포인트 추가:', transaction);
+            console.log('업데이트된 포인트 데이터:', updatedPointsData);
+          }
         }
         
         return {
@@ -703,7 +737,10 @@ export default function WalkPage() {
                 </p>
                 <div className="bg-yellow-100 rounded-lg p-4 mb-6">
                   <div className="text-2xl font-bold text-yellow-800">
-                    +{Math.floor(selectedCourse.distance * 100)} 포인트 획득
+                    +{earnedPoints} 포인트 획득
+                  </div>
+                  <div className="text-sm text-yellow-700 mt-1">
+                    {selectedCourse.distance}km 걷기 완주 보상
                   </div>
                 </div>
                 
