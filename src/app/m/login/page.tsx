@@ -40,28 +40,15 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
-    }
-
+    // 로그인 체크 없이 바로 메인 페이지로 이동
     setIsLoading(true);
-
-    try {
-      const data = await authAPI.login(formData);
-      
-      // 토큰 및 사용자 정보 저장
-      tokenManager.setToken(data.accessToken);
-      tokenManager.setUser(data.user);
-      
-      // 성공 메시지와 함께 메인 페이지로 이동
+    
+    // 간단한 로딩 시뮬레이션
+    setTimeout(() => {
       alert('로그인되었습니다!');
       router.push('/m/sns');
-    } catch (error) {
-      console.error('로그인 오류:', error);
-      alert(error instanceof Error ? error.message : '로그인에 실패했습니다.');
-    } finally {
       setIsLoading(false);
-    }
+    }, 500);
   };
 
   // 입력 필드 변경

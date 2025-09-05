@@ -35,7 +35,8 @@ export default function WalkPage() {
   const [isSearchMode, setIsSearchMode] = useState(false); // 검색 모드 여부
   const [isSearchFieldEnabled, setIsSearchFieldEnabled] = useState(false); // 검색 필드 활성화 여부
   const [currentSteps, setCurrentSteps] = useState<number>(0);
-  const [dailyGoalSteps] = useState<number>(10000); // 하루 추천 걸음 수
+  const [dailyGoalSteps] = useState<number>(Math.floor(Math.random() * (14000 - 9000 + 1)) + 9000); // 9000~14000 사이 랜덤 목표 걸음 수
+  const [isSharingToFeed, setIsSharingToFeed] = useState(false); // 피드 공유 상태
   
   // 트래킹 진행 상태
   const [isTracking, setIsTracking] = useState(false);
@@ -93,8 +94,8 @@ export default function WalkPage() {
           location = await getCurrentLocation();
           locationSource = '브릿지';
           console.log('브릿지에서 위치 정보 가져옴:', location);
-        } catch (error) {
-          console.error('위치 정보를 가져올 수 없습니다:', error);
+      } catch (error) {
+        console.error('위치 정보를 가져올 수 없습니다:', error);
           setDisplayLocation('위치 정보를 가져올 수 없습니다');
           return;
         }
@@ -106,13 +107,20 @@ export default function WalkPage() {
         setSearchLocation(`현재위치(${location.lat.toFixed(4)}/${location.lng.toFixed(4)})`);
         setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)} (${locationSource})`);
         
-        // 위치 기반 코스 자동 로드
-        loadNearbyCourses(location);
+        // 위치 기반 코스 자동 로드 (현재 위치 기반으로 3개 코스 생성)
+        const remainingSteps = Math.max(dailyGoalSteps - currentSteps, 1000); // 최소 1000보 보장
+        const currentLocationCourses = generateTrackingCourses(
+          location.lat,
+          location.lng,
+          remainingSteps,
+          '현재 위치'
+        );
+        setTrackingCourses(currentLocationCourses);
       }
     };
-    
+
     initLocation();
-  }, [searchParams, isSearchMode]);
+  }, [searchParams, isSearchMode, currentSteps]);
 
   // 현재 걸음 수 가져오기
   useEffect(() => {
@@ -135,65 +143,6 @@ export default function WalkPage() {
     }
   }, [isNavigating]);
 
-  // 현재 위치 근처 코스 로드
-  const loadNearbyCourses = (location: Location) => {
-    const mockCourses: TrackingCourse[] = [
-      {
-        id: '1',
-        name: '한강공원 걷기길',
-        location: '여의도 한강공원',
-        distance: 3.2,
-        duration: 40,
-        difficulty: 'easy',
-        steps: 4000,
-        description: '한강을 따라 걷는 편안한 코스',
-        rating: 4.5,
-        type: 'river',
-        imageUrl: getDefaultImageForLocation('한강')
-      },
-      {
-        id: '2',
-        name: '북한산 둘레길',
-        location: '북한산국립공원',
-        distance: 8.5,
-        duration: 120,
-        difficulty: 'hard',
-        steps: 10500,
-        description: '자연을 만끽할 수 있는 산악 코스',
-        rating: 4.8,
-        type: 'mountain',
-        imageUrl: getDefaultImageForLocation('북한산')
-      },
-      {
-        id: '3',
-        name: '서울숲 산책로',
-        location: '서울숲공원',
-        distance: 2.1,
-        duration: 25,
-        difficulty: 'easy',
-        steps: 2600,
-        description: '도심 속 자연을 느낄 수 있는 코스',
-        rating: 4.3,
-        type: 'park',
-        imageUrl: getDefaultImageForLocation('서울숲')
-      },
-      {
-        id: '4',
-        name: '청계천 걷기길',
-        location: '청계천',
-        distance: 5.8,
-        duration: 70,
-        difficulty: 'medium',
-        steps: 7200,
-        description: '도심 속 시원한 물길을 따라 걷는 코스',
-        rating: 4.2,
-        type: 'city',
-        imageUrl: getDefaultImageForLocation('청계천')
-      }
-    ];
-
-    setTrackingCourses(mockCourses);
-  };
 
   // 남은 걸음수 기반 트래킹 코스 생성 함수
   const generateTrackingCourses = (
@@ -461,7 +410,6 @@ export default function WalkPage() {
     setSearchInput('');
     setIsSearchMode(false);
     setIsSearchFieldEnabled(false); // 검색 필드 비활성화
-    setTrackingCourses([]);
     setSelectedCourse(null);
     
     // 쿠키에서 위치 정보 다시 가져오기
@@ -470,11 +418,29 @@ export default function WalkPage() {
       setCurrentLocation(cookieLocation);
       setSearchLocation(`현재위치(${cookieLocation.lat.toFixed(4)}/${cookieLocation.lng.toFixed(4)})`);
       setDisplayLocation(`위도: ${cookieLocation.lat.toFixed(4)}, 경도: ${cookieLocation.lng.toFixed(4)} (쿠키)`);
-      loadNearbyCourses(cookieLocation);
+      
+      // 현재 위치 기반으로 3개 코스 생성
+      const remainingSteps = Math.max(dailyGoalSteps - currentSteps, 1000);
+      const currentLocationCourses = generateTrackingCourses(
+        cookieLocation.lat,
+        cookieLocation.lng,
+        remainingSteps,
+        '현재 위치'
+      );
+      setTrackingCourses(currentLocationCourses);
     } else if (currentLocation) {
       // 쿠키에 위치 정보가 없으면 기존 위치 사용
       setDisplayLocation(`위도: ${currentLocation.lat}, 경도: ${currentLocation.lng}`);
-      loadNearbyCourses(currentLocation);
+      
+      // 현재 위치 기반으로 3개 코스 생성
+      const remainingSteps = Math.max(dailyGoalSteps - currentSteps, 1000);
+      const currentLocationCourses = generateTrackingCourses(
+        currentLocation.lat,
+        currentLocation.lng,
+        remainingSteps,
+        '현재 위치'
+      );
+      setTrackingCourses(currentLocationCourses);
     }
   };
 
@@ -487,6 +453,44 @@ export default function WalkPage() {
   const stopNavigation = () => {
     setIsNavigating(false);
     setProgress(0);
+  };
+
+  // 피드 공유 함수
+  const shareToFeed = () => {
+    if (!selectedCourse) return;
+    
+    setIsSharingToFeed(true);
+    
+    // 하드코딩된 피드 데이터 생성
+    const feedData = {
+      id: Date.now().toString(),
+      type: 'walking_completion',
+      title: `${selectedCourse.name} 완주!`,
+      content: `오늘 ${selectedCourse.distance}km를 걸어서 ${selectedCourse.steps}보를 걸었습니다! 건강한 하루였어요! 🚶‍♀️`,
+      distance: selectedCourse.distance,
+      steps: selectedCourse.steps,
+      duration: selectedCourse.duration,
+      location: selectedCourse.location,
+      points: Math.floor(selectedCourse.distance * 100),
+      timestamp: new Date().toISOString(),
+      user: {
+        name: 'GreenMate 사용자',
+        avatar: '/images/default-avatar.svg'
+      }
+    };
+    
+    // 로컬 스토리지에 피드 데이터 저장 (실제로는 API 호출)
+    const existingFeeds = JSON.parse(localStorage.getItem('feeds') || '[]');
+    existingFeeds.unshift(feedData);
+    localStorage.setItem('feeds', JSON.stringify(existingFeeds));
+    
+    // 성공 메시지
+    setTimeout(() => {
+      alert('피드에 성공적으로 공유되었습니다!');
+      setIsSharingToFeed(false);
+      // 피드 페이지로 이동
+      window.location.href = '/m/sns';
+    }, 1000);
   };
 
   return (
@@ -533,7 +537,7 @@ export default function WalkPage() {
                   <Search size={16} className="text-primary-600" />
                 </div>
                 <span className="font-medium text-gray-900">트래킹 코스 검색</span>
-              </div>
+                </div>
               
               <div className="space-y-3">
                 {/* 다른 곳에서 시작하기 버튼 */}
@@ -546,14 +550,14 @@ export default function WalkPage() {
                       <MapPin size={16} />
                       <span>다른 곳에서 시작하기</span>
                     </button>
-                  </div>
+              </div>
                 )}
 
                 {/* 검색 필드 (활성화된 경우에만 표시) */}
                 {isSearchFieldEnabled && (
                   <>
-                    <input
-                      type="text"
+              <input
+                type="text"
                       placeholder="위치를 검색하세요 (예: 강남역, 여의도)"
                       value={searchInput}
                       onChange={(e) => setSearchInput(e.target.value)}
@@ -640,7 +644,7 @@ export default function WalkPage() {
                     {trackingProgress.remainingDistance.toFixed(1)}km
                   </div>
                 </div>
-              </div>
+            </div>
 
               {/* 방향 표시 */}
               <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
@@ -651,9 +655,9 @@ export default function WalkPage() {
                   </div>
                   <div className="text-lg font-bold text-gray-900">
                     {trackingProgress.currentDirection}
-                  </div>
                 </div>
               </div>
+            </div>
 
               {/* 코스 정보 */}
               <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -677,14 +681,14 @@ export default function WalkPage() {
                     +{Math.floor(selectedCourse.distance * 100)} 포인트 획득
                   </div>
                 </div>
+                
+                {/* 피드 공유 버튼 */}
                 <button
-                  onClick={() => {
-                    setTrackingProgress(prev => ({ ...prev, isCompleted: false }));
-                    setSelectedCourse(null);
-                  }}
-                  className="bg-primary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-600 transition-colors"
+                  onClick={shareToFeed}
+                  disabled={isSharingToFeed}
+                  className="bg-blue-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 disabled:bg-gray-400 transition-colors mb-4"
                 >
-                  새로운 코스 찾기
+                  {isSharingToFeed ? '공유 중...' : '피드에 공유하기'}
                 </button>
               </div>
             </div>
@@ -693,15 +697,15 @@ export default function WalkPage() {
           {/* 트래킹 코스 목록 - 화면 전체 활용 */}
           {!isTracking && !trackingProgress.isCompleted && trackingCourses.length > 0 && (
             <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-3">
+            <div className="space-y-3">
                 {trackingCourses.map((course) => (
-                  <div
+                <div
                     key={course.id}
-                    className={`card cursor-pointer transition-all ${
+                  className={`card cursor-pointer transition-all ${
                       selectedCourse?.id === course.id
-                        ? 'ring-2 ring-primary-500 bg-primary-50'
-                        : 'hover:bg-gray-50'
-                    }`}
+                      ? 'ring-2 ring-primary-500 bg-primary-50'
+                      : 'hover:bg-gray-50'
+                  }`}
                     onClick={() => setSelectedCourse(course)}
                   >
                     <div className="flex items-start space-x-4">
@@ -721,30 +725,30 @@ export default function WalkPage() {
                       )}
                       
                       {/* 텍스트 정보 섹션 */}
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
                           {getTypeIcon(course.type)}
                           <h3 className="font-medium text-gray-900">{course.name}</h3>
                           {selectedCourse?.id === course.id && (
-                            <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                          )}
-                        </div>
+                          <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
+                        )}
+                      </div>
                         
                         <p className="text-sm text-gray-600 mb-2">{course.description}</p>
                         <p className="text-sm text-gray-500 mb-3">{course.location}</p>
                         
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4 text-sm text-gray-500">
-                            <div className="flex items-center space-x-1">
-                              <Navigation size={14} />
+                      <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex items-center space-x-1">
+                          <Navigation size={14} />
                               <span>{course.distance}km</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Clock size={14} />
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Clock size={14} />
                               <span>{course.duration}분</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Footprints size={14} />
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Footprints size={14} />
                               <span>{course.steps}보</span>
                             </div>
                           </div>
@@ -757,18 +761,18 @@ export default function WalkPage() {
                               <Star size={14} className="text-yellow-500 fill-current" />
                               <span className="text-sm text-gray-600">{course.rating}</span>
                             </div>
-                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                </div>
+              ))}
               </div>
             </div>
           )}
 
           {/* 시작 버튼 - 하단 고정 */}
-          {trackingCourses.length > 0 && (
+          {trackingCourses.length > 0 && !trackingProgress.isCompleted && (
             <div className="flex-shrink-0 p-4 bg-white border-t border-gray-200">
               <button
                 onClick={startNavigation}
@@ -776,6 +780,21 @@ export default function WalkPage() {
                 className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {selectedCourse ? `${selectedCourse.name} 시작하기` : '코스를 선택해주세요'}
+              </button>
+            </div>
+          )}
+
+          {/* 새로운 코스 찾기 버튼 - 트래킹 완료 시 하단 고정 */}
+          {trackingProgress.isCompleted && (
+            <div className="flex-shrink-0 p-4 bg-white border-t border-gray-200">
+              <button
+                onClick={() => {
+                  setTrackingProgress(prev => ({ ...prev, isCompleted: false }));
+                  setSelectedCourse(null);
+                }}
+                className="w-full bg-primary-500 hover:bg-primary-600 text-white font-medium py-4 px-6 rounded-lg transition-colors duration-200"
+              >
+                새로운 코스 찾기
               </button>
             </div>
           )}
