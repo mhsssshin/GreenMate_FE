@@ -55,7 +55,7 @@ export default function LoginPage() {
       
       // 성공 메시지와 함께 메인 페이지로 이동
       alert('로그인되었습니다!');
-      router.push('/sns');
+      router.push('/m/sns');
     } catch (error) {
       console.error('로그인 오류:', error);
       alert(error instanceof Error ? error.message : '로그인에 실패했습니다.');
@@ -173,7 +173,7 @@ export default function LoginPage() {
               계정이 없으신가요?{' '}
               <button
                 type="button"
-                onClick={() => router.push('/signup')}
+                onClick={() => router.push('/m/signup')}
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
                 회원가입

@@ -101,7 +101,7 @@ export default function SignupPage() {
       
       // 성공 메시지와 함께 메인 페이지로 이동
       alert('회원가입이 완료되었습니다!');
-      router.push('/sns');
+      router.push('/m/sns');
     } catch (error) {
       console.error('회원가입 오류:', error);
       const errorMessage = error instanceof Error ? error.message : '회원가입에 실패했습니다.';
@@ -389,7 +389,7 @@ export default function SignupPage() {
               이미 계정이 있으신가요?{' '}
               <button
                 type="button"
-                onClick={() => router.push('/login')}
+                onClick={() => router.push('/m/login')}
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
                 로그인
