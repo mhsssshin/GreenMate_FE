@@ -49,6 +49,11 @@ export default function WalkPage() {
   // 위치 정보 초기화 (쿠키 우선, GET Parameter, 브릿지 순서)
   useEffect(() => {
     const initLocation = async () => {
+      // 검색 모드일 때는 위치를 다시 설정하지 않음
+      if (isSearchMode) {
+        return;
+      }
+      
       let location: Location | null = null;
       let locationSource = '';
       
@@ -94,11 +99,7 @@ export default function WalkPage() {
       if (location) {
         setCurrentLocation(location);
         setSearchLocation(`현재위치(${location.lat.toFixed(4)}/${location.lng.toFixed(4)})`);
-        
-        // 검색 모드가 아닐 때만 현재 위치 표시 (쿠키값 사용)
-        if (!isSearchMode) {
-          setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)} (${locationSource})`);
-        }
+        setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)} (${locationSource})`);
         
         // 위치 기반 코스 자동 로드
         loadNearbyCourses(location);
@@ -247,7 +248,7 @@ export default function WalkPage() {
             lng: firstResult.longitude
           });
           // 검색 모드에서는 API에서 받은 좌표 표시
-          setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude}`);
+          setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude} (검색)`);
         }
       }
 
