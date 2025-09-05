@@ -268,7 +268,7 @@
             
             <div class="nav-controls">
                 <button class="mobile-menu-btn" style="display: none; background: none; border: none; font-size: 24px; color: rgb(46, 125, 50); cursor: pointer; padding: 8px;">☰</button>
-                <a href="./GreenMate_v1.0.0.apk" download="GreenMate_v1.0.0.apk" class="download-btn" style="">앱 다운로드</a>
+                <a href="./GreenMate_v2.0.0.apk" download="GreenMate_v2.0.0.apk" class="download-btn" style="">앱 다운로드</a>
             </div>
         </nav>
     </header>
@@ -294,7 +294,7 @@
                     </div>
                 </div>
                 <div class="hero-buttons">
-                    <a href="./GreenMate_v1.0.0.apk" download="GreenMate_v1.0.0.apk" class="btn-primary" style="">무료 다운로드</a>
+                    <a href="./GreenMate_v2.0.0.apk" download="GreenMate_v2.0.0.apk" class="btn-primary" style="">무료 다운로드</a>
                     <button class="btn-secondary">서비스 소개 영상</button>
                 </div>
             </div>
@@ -566,7 +566,7 @@
                     <h2>지금 바로 시작하세요</h2>
                     <p>LifePlus GreenMate로 건강한 걷기 습관을 만들고<br>지구 환경 보호에도 동참해보세요.</p>
                     <div class="download-buttons">
-                        <a href="./GreenMate_v1.0.0.apk" download="GreenMate_v1.0.0.apk" class="store-btn android">
+                        <a href="./GreenMate_v2.0.0.apk" download="GreenMate_v2.0.0.apk" class="store-btn android">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" style="height: 60px;">
                         </a>
                     </div>
@@ -601,7 +601,7 @@
                 <div class="footer-section">
                     <h5>다운로드</h5>
                     <div class="footer-download">
-                        <a href="./GreenMate_v1.0.0.apk" download="GreenMate_v1.0.0.apk">Android 앱 다운로드</a>
+                        <a href="./GreenMate_v2.0.0.apk" download="GreenMate_v2.0.0.apk">Android 앱 다운로드</a>
                     </div>
                 </div>
                 
@@ -668,8 +668,8 @@
             // APK 다운로드 강제 실행
             function forceDownloadAPK() {
                 const link = document.createElement('a');
-                link.href = './GreenMate_v1.0.0.apk';
-                link.download = 'GreenMate_v1.0.0.apk';
+                link.href = './GreenMate_v2.0.0.apk';
+                link.download = 'GreenMate_v2.0.0.apk';
                 link.target = '_blank';
                 document.body.appendChild(link);
                 link.click();
@@ -677,7 +677,7 @@
             }
 
             // 다운로드 버튼에 이벤트 리스너 추가
-            const downloadButtons = document.querySelectorAll('a[href*="GreenMate_v1.0.0.apk"]');
+            const downloadButtons = document.querySelectorAll('a[href*="GreenMate_v2.0.0.apk"]');
             downloadButtons.forEach(button => {
                 button.addEventListener('click', function(e) {
                     e.preventDefault();
