@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { MapPin, Clock, Footprints, Navigation, Search, Star, Mountain, TreePine } from 'lucide-react';
+import { MapPin, Clock, Footprints, Navigation, Search, Star, Mountain, TreePine, Trophy, Target, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Location } from '@/types';
 import { getCurrentLocation, watchLocation } from '@/lib/bridge';
 import { getCurrentSteps, getDefaultImageForLocation } from '@/utils/helpers';
@@ -33,6 +33,16 @@ export default function WalkPage() {
   const [displayLocation, setDisplayLocation] = useState<string>('');
   const [currentSteps, setCurrentSteps] = useState<number>(0);
   const [dailyGoalSteps] = useState<number>(10000); // 하루 추천 걸음 수
+  
+  // 트래킹 진행 상태
+  const [isTracking, setIsTracking] = useState(false);
+  const [trackingProgress, setTrackingProgress] = useState({
+    elapsedTime: 0, // 경과 시간 (초)
+    remainingDistance: 0, // 남은 거리 (km)
+    currentDirection: 'N', // 현재 방향
+    progressPercentage: 0, // 진행률 (%)
+    isCompleted: false // 완료 여부
+  });
 
   // GET Parameter에서 GPS 좌표 가져오기
   useEffect(() => {
@@ -255,9 +265,72 @@ export default function WalkPage() {
     }
   };
 
+  // 방향 아이콘 반환
+  const getDirectionIcon = (direction: string) => {
+    switch (direction) {
+      case 'N': return <ArrowUp size={24} className="text-blue-500" />;
+      case 'NE': return <ArrowUp size={24} className="text-blue-500" style={{ transform: 'rotate(45deg)' }} />;
+      case 'E': return <ArrowRight size={24} className="text-blue-500" />;
+      case 'SE': return <ArrowDown size={24} className="text-blue-500" style={{ transform: 'rotate(-45deg)' }} />;
+      case 'S': return <ArrowDown size={24} className="text-blue-500" />;
+      case 'SW': return <ArrowDown size={24} className="text-blue-500" style={{ transform: 'rotate(45deg)' }} />;
+      case 'W': return <ArrowLeft size={24} className="text-blue-500" />;
+      case 'NW': return <ArrowUp size={24} className="text-blue-500" style={{ transform: 'rotate(-45deg)' }} />;
+      default: return <Navigation size={24} className="text-blue-500" />;
+    }
+  };
+
+  // 트래킹 시작
+  const startTracking = () => {
+    if (selectedCourse) {
+      setIsTracking(true);
+      setTrackingProgress({
+        elapsedTime: 0,
+        remainingDistance: selectedCourse.distance,
+        currentDirection: 'N',
+        progressPercentage: 0,
+        isCompleted: false
+      });
+    }
+  };
+
+  // 트래킹 시뮬레이션 (10초 동안 진행)
+  useEffect(() => {
+    if (!isTracking || !selectedCourse) return;
+
+    const interval = setInterval(() => {
+      setTrackingProgress(prev => {
+        const newElapsedTime = prev.elapsedTime + 1;
+        const totalTime = 10; // 10초로 고정
+        const progressPercentage = Math.min((newElapsedTime / totalTime) * 100, 100);
+        const remainingDistance = selectedCourse.distance * (1 - progressPercentage / 100);
+        
+        // 방향 랜덤 변경 (실제로는 GPS 방향을 사용)
+        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        const currentDirection = directions[Math.floor(Math.random() * directions.length)];
+        
+        const isCompleted = progressPercentage >= 100;
+        
+        if (isCompleted) {
+          setIsTracking(false);
+        }
+        
+        return {
+          elapsedTime: newElapsedTime,
+          remainingDistance: Math.max(remainingDistance, 0),
+          currentDirection,
+          progressPercentage,
+          isCompleted
+        };
+      });
+    }, 1000); // 1초마다 업데이트
+
+    return () => clearInterval(interval);
+  }, [isTracking, selectedCourse]);
+
   const startNavigation = () => {
     if (selectedCourse) {
-      setIsNavigating(true);
+      startTracking();
     }
   };
 
@@ -351,13 +424,100 @@ export default function WalkPage() {
             </div>
           </div>
 
+          {/* 트래킹 진행 화면 */}
+          {isTracking && selectedCourse && (
+            <div className="flex-1 flex flex-col p-4">
+              {/* 진행률 표시 */}
+              <div className="mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-medium text-gray-700">진행률</span>
+                  <span className="text-sm font-bold text-primary-600">
+                    {trackingProgress.progressPercentage.toFixed(1)}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div 
+                    className="bg-primary-500 h-3 rounded-full transition-all duration-1000"
+                    style={{ width: `${trackingProgress.progressPercentage}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* 트래킹 정보 */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Clock size={20} className="text-blue-500" />
+                    <span className="text-sm font-medium text-gray-700">진행시간</span>
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">
+                    {Math.floor(trackingProgress.elapsedTime / 60)}:{(trackingProgress.elapsedTime % 60).toString().padStart(2, '0')}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4 shadow-sm">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Target size={20} className="text-green-500" />
+                    <span className="text-sm font-medium text-gray-700">남은 거리</span>
+                  </div>
+                  <div className="text-2xl font-bold text-gray-900">
+                    {trackingProgress.remainingDistance.toFixed(1)}km
+                  </div>
+                </div>
+              </div>
+
+              {/* 방향 표시 */}
+              <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+                <div className="text-center">
+                  <div className="text-sm font-medium text-gray-700 mb-4">현재 방향</div>
+                  <div className="flex justify-center items-center mb-4">
+                    {getDirectionIcon(trackingProgress.currentDirection)}
+                  </div>
+                  <div className="text-lg font-bold text-gray-900">
+                    {trackingProgress.currentDirection}
+                  </div>
+                </div>
+              </div>
+
+              {/* 코스 정보 */}
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <h3 className="font-semibold text-gray-900 mb-2">{selectedCourse.name}</h3>
+                <p className="text-sm text-gray-600">{selectedCourse.description}</p>
+              </div>
+            </div>
+          )}
+
+          {/* 트래킹 완료 화면 */}
+          {trackingProgress.isCompleted && selectedCourse && (
+            <div className="flex-1 flex flex-col items-center justify-center p-8">
+              <div className="text-center">
+                <Trophy size={80} className="text-yellow-500 mx-auto mb-6" />
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">트래킹 성공!!</h2>
+                <p className="text-lg text-gray-600 mb-6">
+                  {selectedCourse.name} 완주를 축하합니다!
+                </p>
+                <div className="bg-yellow-100 rounded-lg p-4 mb-6">
+                  <div className="text-2xl font-bold text-yellow-800">
+                    +{Math.floor(selectedCourse.distance * 100)} 포인트 획득
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    setTrackingProgress(prev => ({ ...prev, isCompleted: false }));
+                    setSelectedCourse(null);
+                  }}
+                  className="bg-primary-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-600 transition-colors"
+                >
+                  새로운 코스 찾기
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* 트래킹 코스 목록 - 화면 전체 활용 */}
-          {trackingCourses.length > 0 && (
+          {!isTracking && !trackingProgress.isCompleted && trackingCourses.length > 0 && (
             <div className="flex-1 overflow-y-auto p-4">
               <div className="space-y-3">
-                <h2 className="text-lg font-semibold text-gray-900 sticky top-0 bg-gray-50 py-2">
-                  {searchLocation ? '검색 결과' : '근처 트래킹 코스'}
-                </h2>
                 {trackingCourses.map((course) => (
                   <div
                     key={course.id}
