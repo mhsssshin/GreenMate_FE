@@ -247,6 +247,8 @@ export default function WalkPage() {
             lat: firstResult.latitude,
             lng: firstResult.longitude
           });
+          // 검색된 위치로 현재 위치 표시 업데이트
+          setSearchLocation(`현재위치(${firstResult.latitude.toFixed(4)}/${firstResult.longitude.toFixed(4)})`);
           // 검색 모드에서는 API에서 받은 좌표 표시
           setDisplayLocation(`위도: ${firstResult.latitude}, 경도: ${firstResult.longitude} (검색)`);
         }
