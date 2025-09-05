@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { MapPin, Clock, Footprints, Navigation, Search, Star, Mountain, TreePine } from 'lucide-react';
 import { Location } from '@/types';
 import { getCurrentLocation, watchLocation } from '@/lib/bridge';
+import { getCurrentSteps } from '@/utils/helpers';
 
 interface TrackingCourse {
   id: string;
@@ -29,6 +30,8 @@ export default function WalkPage() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [displayLocation, setDisplayLocation] = useState<string>('');
+  const [currentSteps, setCurrentSteps] = useState<number>(0);
+  const [dailyGoalSteps] = useState<number>(10000); // 하루 추천 걸음 수
 
   // GET Parameter에서 GPS 좌표 가져오기
   useEffect(() => {
@@ -65,6 +68,12 @@ export default function WalkPage() {
       initLocation();
     }
   }, [searchParams]);
+
+  // 현재 걸음 수 가져오기
+  useEffect(() => {
+    const steps = getCurrentSteps();
+    setCurrentSteps(steps);
+  }, []);
 
   // 위치 추적
   useEffect(() => {
@@ -252,6 +261,38 @@ export default function WalkPage() {
     <div className="min-h-screen bg-gray-50">
       {!isNavigating ? (
         <div className="flex flex-col h-screen">
+          {/* 걸음 수 표시 섹션 - 최상단 */}
+          <div className="flex-shrink-0 p-4 bg-gradient-to-r from-primary-500 to-primary-600">
+            <div className="text-center text-white">
+              <div className="flex items-center justify-center space-x-2 mb-2">
+                <Footprints size={20} className="text-white" />
+                <span className="text-lg font-semibold">오늘의 걸음 수</span>
+              </div>
+              <div className="flex items-center justify-center space-x-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold">{currentSteps.toLocaleString()}</div>
+                  <div className="text-sm text-primary-100">현재 걸음 수</div>
+                </div>
+                <div className="text-primary-200">/</div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold">{dailyGoalSteps.toLocaleString()}</div>
+                  <div className="text-sm text-primary-100">목표 걸음 수</div>
+                </div>
+              </div>
+              <div className="mt-3">
+                <div className="w-full bg-primary-400 rounded-full h-2">
+                  <div
+                    className="bg-white h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${Math.min((currentSteps / dailyGoalSteps) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <div className="text-xs text-primary-100 mt-1">
+                  {Math.round((currentSteps / dailyGoalSteps) * 100)}% 완료
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* 위치 검색 섹션 - 상단 고정 */}
           <div className="flex-shrink-0 p-4 bg-white border-b border-gray-200">
             <div className="card">

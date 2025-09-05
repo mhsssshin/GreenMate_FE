@@ -209,3 +209,29 @@ export function getStorageUsage(): { used: number; total: number } {
   
   return { used, total: 5 * 1024 * 1024 }; // 5MB
 }
+
+/**
+ * 쿠키에서 값을 가져오는 함수
+ */
+export function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop()?.split(';').shift() || null;
+  }
+  return null;
+}
+
+/**
+ * 현재 걸음 수를 쿠키에서 가져오는 함수
+ */
+export function getCurrentSteps(): number {
+  const stepsCookie = getCookie('greenmate_steps');
+  if (stepsCookie) {
+    const steps = parseInt(stepsCookie, 10);
+    return isNaN(steps) ? 0 : steps;
+  }
+  return 0;
+}
