@@ -28,6 +28,7 @@ export default function WalkPage() {
   const [selectedCourse, setSelectedCourse] = useState<TrackingCourse | null>(null);
   const [isNavigating, setIsNavigating] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [displayLocation, setDisplayLocation] = useState<string>('');
 
   // GET Parameter에서 GPS 좌표 가져오기
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function WalkPage() {
       };
       setCurrentLocation(gpsLocation);
       setSearchLocation(`현재위치(${lat}/${lng})`);
+      setDisplayLocation(`위도: ${lat}, 경도: ${lng}`);
       // GPS 좌표 기반 코스 자동 로드
       loadNearbyCourses(gpsLocation);
     } else {
@@ -51,10 +53,12 @@ export default function WalkPage() {
           const location = await getCurrentLocation();
           setCurrentLocation(location);
           setSearchLocation(`현재위치(${location.lat.toFixed(4)}/${location.lng.toFixed(4)})`);
+          setDisplayLocation(`위도: ${location.lat.toFixed(4)}, 경도: ${location.lng.toFixed(4)}`);
           // 현재 위치 기반 코스 자동 로드
           loadNearbyCourses(location);
         } catch (error) {
           console.error('위치 정보를 가져올 수 없습니다:', error);
+          setDisplayLocation('위치 정보를 가져올 수 없습니다');
         }
       };
 
@@ -168,6 +172,10 @@ export default function WalkPage() {
     setTimeout(() => {
       setTrackingCourses(searchResults);
       setIsSearching(false);
+      // 검색 후 현재 위치 표시 업데이트
+      if (currentLocation) {
+        setDisplayLocation(`위도: ${currentLocation.lat.toFixed(4)}, 경도: ${currentLocation.lng.toFixed(4)}`);
+      }
     }, 1000);
   };
 
@@ -227,25 +235,37 @@ export default function WalkPage() {
               <div className="space-y-3">
                 <input
                   type="text"
-                  placeholder="위치를 검색하세요"
+                  placeholder="위치를 검색하세요 (예: 강남역, 여의도)"
                   value={searchLocation}
                   onChange={(e) => setSearchLocation(e.target.value)}
                   className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
                 
-                {/* 자동차 시동버튼 스타일의 검색 버튼 */}
-                <div className="flex justify-center py-4">
+                {/* 검색 버튼 */}
+                <div className="flex justify-center">
                   <button
                     onClick={searchCourses}
-                    disabled={isSearching}
-                    className="w-24 h-24 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 transform hover:scale-110 disabled:scale-100"
+                    disabled={isSearching || !searchLocation.trim()}
+                    className="px-6 py-2 bg-primary-500 hover:bg-primary-600 disabled:bg-gray-300 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2"
                   >
-                    <Search size={32} className="text-white" />
+                    <Search size={16} />
+                    <span>{isSearching ? '검색 중...' : '검색'}</span>
                   </button>
                 </div>
                 
+                {/* 현재 위치 정보 표시 */}
+                {displayLocation && (
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <MapPin size={14} className="text-gray-500" />
+                      <span className="text-sm font-medium text-gray-700">현재 위치</span>
+                    </div>
+                    <p className="text-sm text-gray-600">{displayLocation}</p>
+                  </div>
+                )}
+                
                 <p className="text-center text-sm text-gray-500">
-                  {isSearching ? '검색 중...' : '검색 버튼을 눌러 트래킹 코스를 찾아보세요'}
+                  {isSearching ? '검색 중...' : '위치를 입력하고 검색 버튼을 눌러 트래킹 코스를 찾아보세요'}
                 </p>
               </div>
             </div>
